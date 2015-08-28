@@ -70,6 +70,13 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        mappings:
+            KontuakNameSpace:
+                mapping: true
+                dir: "%kernel.root_dir%/../src/AppBundle/Resources/config/Doctrine"
+                is_bundle: false
+                type: yml
+                prefix: Kontuak
 
 # Swiftmailer Configuration
 swiftmailer:
