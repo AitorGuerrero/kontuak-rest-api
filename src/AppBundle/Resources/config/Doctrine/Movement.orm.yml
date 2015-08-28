@@ -1,0 +1,10 @@
+Kontuak\Movement:
+    type: entity
+    table: movements
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+        amount:
+            type: float
