@@ -1,4 +1,4 @@
-Kontuak\Movement:
+Kontuak\PeriodicalMovement:
     type: entity
     table: movements
     id:
@@ -10,8 +10,15 @@ Kontuak\Movement:
             type: float
         concept:
             type: text
-        date:
+        periodType:
+            type: integer
+        periodAmount:
+            type: integer
+        starts:
             type: date
+        ends:
+            type: date
+            nullable: true
         created:
             type: datetime
         modified:
