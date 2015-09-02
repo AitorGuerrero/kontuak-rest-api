@@ -1,10 +1,10 @@
-Kontuak\Movement:
+KontuakBundle\Integration\Doctrine\Movement:
     type: entity
     table: movements
     id:
-        id:
-            type: integer
-            generator: { strategy: AUTO }
+        doctrineId:
+            type: string
+            column: id
     fields:
         amount:
             type: float
@@ -14,5 +14,5 @@ Kontuak\Movement:
             type: date
         created:
             type: datetime
-        modified:
-            type: datetime
+    lifecycleCallbacks:
+            prePersist: [mapToDoctrine]

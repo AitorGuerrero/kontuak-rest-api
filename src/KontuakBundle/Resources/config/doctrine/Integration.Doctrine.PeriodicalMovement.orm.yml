@@ -1,10 +1,9 @@
-Kontuak\PeriodicalMovement:
+KontuakBundle\Integration\Doctrine\PeriodicalMovement:
     type: entity
-    table: movements
     id:
-        id:
-            type: integer
-            generator: { strategy: AUTO }
+        doctrineId:
+            column: id
+            type: string
     fields:
         amount:
             type: float
@@ -19,7 +18,5 @@ Kontuak\PeriodicalMovement:
         ends:
             type: date
             nullable: true
-        created:
-            type: datetime
-        modified:
-            type: datetime
+    lifecycleCallbacks:
+        prePersist: [mapToDoctrine]
