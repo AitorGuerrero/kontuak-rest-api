@@ -20,3 +20,5 @@ KontuakBundle\Integration\Doctrine\PeriodicalMovement:
             nullable: true
     lifecycleCallbacks:
         prePersist: [mapToDoctrine]
+        preUpdate: [mapToDoctrine]
+        postLoad: [mapToDomain]

@@ -16,3 +16,5 @@ KontuakBundle\Integration\Doctrine\Movement:
             type: datetime
     lifecycleCallbacks:
             prePersist: [mapToDoctrine]
+            preUpdate: [mapToDoctrine]
+            postLoad: [mapToDomain]
