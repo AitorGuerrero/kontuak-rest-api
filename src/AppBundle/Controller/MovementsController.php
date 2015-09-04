@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Resources\Form;
+use Kontuak\Movement\TotalAmountCalculator;
 use KontuakBundle\Integration\Doctrine\Movement;
 use Kontuak\Interactors;
 use Symfony\Component\HttpFoundation;
@@ -10,23 +11,19 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * Class MovementsController
- * @route
  * @package AppBundle\Controller
  */
 class MovementsController extends FOSRestController implements ClassResourceInterface
 {
+    private $webClient = 'http://localhost:3000';
+
     /**
      * @param HttpFoundation\Request $httpRequest
-     * @throws \Kontuak\Interactors\InvalidArgumentException
-     * @throws \Kontuak\Interactors\SystemException
-     * @internal param HttpFoundation\Request $request
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
      *  resource=true,
@@ -36,7 +33,6 @@ class MovementsController extends FOSRestController implements ClassResourceInte
      */
     public function postAction(HttpFoundation\Request $httpRequest)
     {
-        $webClient = 'http://localhost:3000';
         $movementResource = new Form\Resource\Movement();
         $form = $this->createForm(new Form\Type\Movement(), $movementResource);
         $form->handleRequest($httpRequest);
@@ -54,7 +50,7 @@ class MovementsController extends FOSRestController implements ClassResourceInte
             $request->date = $movementResource->date;
             $useCase->execute($request);
             $response = new HttpFoundation\Response();
-            $response->headers->set('Access-Control-Allow-Origin', $webClient);
+            $response->headers->set('Access-Control-Allow-Origin', $this->webClient);
 //            $response->headers->set(
 //                'Location',
 //                $this->generateUrl(
@@ -67,7 +63,40 @@ class MovementsController extends FOSRestController implements ClassResourceInte
             return $response;
         }
         $view = $this->view($form);
-        $view->setHeader('Access-Control-Allow-Origin', $webClient);
+        $view->setHeader('Access-Control-Allow-Origin', $this->webClient);
         return $this->handleView($view);
+    }
+
+    /**
+     * @param HttpFoundation\Request $httpRequest
+     * @throws Interactors\InvalidArgumentException
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  resource=true,
+     *  requirements={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="integer",
+     *          "description"="How many objects to receive"
+     *      }
+     *  }
+     * )
+     */
+    public function getHistoryAction(HttpFoundation\Request $httpRequest)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $source = new Movement\Source($em);
+        $totalAmountCalculator = new TotalAmountCalculator($source);
+        $useCase = new Interactors\Movement\History\UseCase($source, $totalAmountCalculator);
+        $request = new Interactors\Movement\History\Request();
+        $request->limit = (int) $httpRequest->get('limit');
+        $useCaseResponse = $useCase->execute($request);
+
+        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200, [
+            'Access-Control-Allow-Origin' => $this->webClient
+        ]);
+
+        return $response;
     }
 }

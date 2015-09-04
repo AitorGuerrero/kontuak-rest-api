@@ -2,10 +2,9 @@
 
 namespace KontuakBundle\Integration\Doctrine;
 
-use Kontuak\Movement as BaseMovement;
-use Kontuak\MovementId;
+use Kontuak\Movement\Id;
 
-class Movement extends BaseMovement
+class Movement extends \Kontuak\Movement
 {
     /** @var string */
     protected $doctrineId;
@@ -17,6 +16,6 @@ class Movement extends BaseMovement
 
     public function mapToDomain()
     {
-        $this->id = MovementId::fromString($this->doctrineId);
+        $this->id = Id::fromString($this->doctrineId);
     }
 }

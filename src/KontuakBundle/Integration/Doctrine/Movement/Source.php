@@ -37,4 +37,8 @@ class Source implements Movement\Source
         );
         $this->em->persist($doctrineMovement);
     }
+
+    public function em() {
+        return $this->em;
+    }
 }
