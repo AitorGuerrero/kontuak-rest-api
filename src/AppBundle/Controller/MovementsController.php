@@ -2,12 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Resources\Form;
+use KontuakBundle\Integration\Doctrine\Movement;
+use Kontuak\Interactors;
+use Symfony\Component\HttpFoundation;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use Kontuak\Interactors\CreateNewEntry;
-use KontuakBundle\Integration\Doctrine\Movement;
-use AppBundle\Resources\Form;
-use Symfony\Component\HttpFoundation;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -42,11 +42,12 @@ class MovementsController extends FOSRestController implements ClassResourceInte
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $useCase = new CreateNewEntry\UseCase(
+            $useCase = new Interactors\Movement\Create\UseCase(
                 new Movement\Source($em),
                 new \DateTime()
             );
-            $request = new CreateNewEntry\Request();
+            $request = new Interactors\Movement\Create\Request();
+            $request->id =  $movementResource->id;
             $request->amount = $movementResource->amount;
             $request->concept = $movementResource->concept;
             $request->date = $movementResource->date;
