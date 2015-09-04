@@ -1,0 +1,20 @@
+KontuakBundle\Integration\Doctrine\Movement:
+    type: entity
+    table: movements
+    id:
+        doctrineId:
+            type: string
+            column: id
+    fields:
+        amount:
+            type: float
+        concept:
+            type: text
+        date:
+            type: date
+        created:
+            type: datetime
+    lifecycleCallbacks:
+            prePersist: [mapToDoctrine]
+            preUpdate: [mapToDoctrine]
+            postLoad: [mapToDomain]

@@ -1,0 +1,24 @@
+KontuakBundle\Integration\Doctrine\PeriodicalMovement:
+    type: entity
+    id:
+        doctrineId:
+            column: id
+            type: string
+    fields:
+        amount:
+            type: float
+        concept:
+            type: text
+        periodType:
+            type: integer
+        periodAmount:
+            type: integer
+        starts:
+            type: date
+        ends:
+            type: date
+            nullable: true
+    lifecycleCallbacks:
+        prePersist: [mapToDoctrine]
+        preUpdate: [mapToDoctrine]
+        postLoad: [mapToDomain]
