@@ -36,6 +36,7 @@ class MovementsController extends FOSRestController implements ClassResourceInte
      */
     public function postAction(HttpFoundation\Request $httpRequest)
     {
+        $webClient = 'http://localhost:3000';
         $movementResource = new Form\Resource\Movement();
         $form = $this->createForm(new Form\Type\Movement(), $movementResource);
         $form->handleRequest($httpRequest);
@@ -53,6 +54,7 @@ class MovementsController extends FOSRestController implements ClassResourceInte
             $request->date = $movementResource->date;
             $useCase->execute($request);
             $response = new HttpFoundation\Response();
+            $response->headers->set('Access-Control-Allow-Origin', $webClient);
 //            $response->headers->set(
 //                'Location',
 //                $this->generateUrl(
@@ -64,7 +66,8 @@ class MovementsController extends FOSRestController implements ClassResourceInte
             $em->flush();
             return $response;
         }
-
-        return $this->handleView($this->view($form));
+        $view = $this->view($form);
+        $view->setHeader('Access-Control-Allow-Origin', $webClient);
+        return $this->handleView($view);
     }
 }
