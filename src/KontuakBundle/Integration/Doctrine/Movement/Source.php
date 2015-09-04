@@ -4,10 +4,8 @@ namespace KontuakBundle\Integration\Doctrine\Movement;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Kontuak\Movement;
-use Kontuak\MovementsCollection;
-use Kontuak\MovementsSource;
 
-class Source implements MovementsSource
+class Source implements Movement\Source
 {
     /** @var EntityManagerInterface */
     private $em;
@@ -18,7 +16,7 @@ class Source implements MovementsSource
     }
 
     /**
-     * @return MovementsCollection
+     * @return Movement\Collection
      */
     public function collection()
     {
@@ -30,6 +28,13 @@ class Source implements MovementsSource
      */
     public function add(Movement $movement)
     {
-        $this->em->persist($movement);
+        $doctrineMovement = new \KontuakBundle\Integration\Doctrine\Movement(
+            $movement->id(),
+            $movement->amount(),
+            $movement->concept(),
+            $movement->date(),
+            $movement->created()
+        );
+        $this->em->persist($doctrineMovement);
     }
 }

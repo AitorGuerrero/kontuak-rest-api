@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3b5081c580cf0a5571f47ddd811360ed",
+    "hash": "e9bb3aff8b8bc1b95e7b13192fae7346",
     "packages": [
         {
             "name": "aitor.guerrero/kontuak",
-            "version": "v0.1.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:aitorguerrero/kontuak.git",
-                "reference": "42878b212ef26b3e584d3d3d5adca3615be4bd72"
+                "reference": "0860c329d55df699874d15a1a85811960f4d206b"
             },
             "require": {
                 "phpunit/phpunit": "4.8.*"
@@ -29,7 +29,7 @@
                     "email": "aguerrerolasarte@gmail.com"
                 }
             ],
-            "time": "2015-09-02 13:05:38"
+            "time": "2015-09-04 09:54:30"
         },
         {
             "name": "doctrine/annotations",

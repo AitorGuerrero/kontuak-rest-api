@@ -29,7 +29,8 @@
         "friendsofsymfony/rest-bundle": "^1.7",
         "jms/serializer-bundle": "^1.0",
         "aitor.guerrero/kontuak": "1.*",
-        "nelmio/api-doc-bundle": "^2.9"
+        "nelmio/api-doc-bundle": "^2.9",
+        "symfony/serializer": "^2.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

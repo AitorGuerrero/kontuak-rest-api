@@ -2,32 +2,68 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Integration\AitorGuerrero\Kontuak\MovementsCollection;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use Kontuak\Interactors\CreateNewEntry;
+use KontuakBundle\Integration\Doctrine\Movement;
+use AppBundle\Resources\Form;
+use Symfony\Component\HttpFoundation;
+
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use FOS\RestBundle\View\View;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * Class MovementsController
+ * @route
  * @package AppBundle\Controller
  */
-class MovementsController extends FOSRestController
+class MovementsController extends FOSRestController implements ClassResourceInterface
 {
     /**
-     * @route("/movements/{id}")
-     * @method("GET")
-     * @ApiDoc()
+     * @param HttpFoundation\Request $httpRequest
+     * @throws \Kontuak\Interactors\InvalidArgumentException
+     * @throws \Kontuak\Interactors\SystemException
+     * @internal param HttpFoundation\Request $request
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  resource=true,
+     *  input="\AppBundle\Resources\Form\Type\Movement",
+     *  output="\AppBundle\Resources\Form\Type\Movement"
+     * )
      */
-    public function getAction()
+    public function postAction(HttpFoundation\Request $httpRequest)
     {
-        $movementsCollection = new MovementsCollection($this->getDoctrine()->getManager());
-        $request = new CreateNewEntry\Request();
-        $request->amount = 10;
-        $useCase = new CreateNewEntry\UseCase($movementsCollection);
-        $response = $useCase->execute($request);
-        $view = $this->view($response, 200);
-        return $this->handleView($view);
+        $movementResource = new Form\Resource\Movement();
+        $form = $this->createForm(new Form\Type\Movement(), $movementResource);
+        $form->handleRequest($httpRequest);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $useCase = new CreateNewEntry\UseCase(
+                new Movement\Source($em),
+                new \DateTime()
+            );
+            $request = new CreateNewEntry\Request();
+            $request->amount = $movementResource->amount;
+            $request->concept = $movementResource->concept;
+            $request->date = $movementResource->date;
+            $useCase->execute($request);
+            $response = new HttpFoundation\Response();
+//            $response->headers->set(
+//                'Location',
+//                $this->generateUrl(
+//                    'get_movements',
+//                    ['id' => $movementResource->id],
+//                    UrlGenerator::ABSOLUTE_URL
+//                )
+//            );
+            $em->flush();
+            return $response;
+        }
+
+        return $this->handleView($this->view($form));
     }
 }
