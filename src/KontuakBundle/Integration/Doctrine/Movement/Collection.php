@@ -151,8 +151,8 @@ class Collection implements Movement\Collection
      */
     public function next()
     {
-        $collection = $this->collection();
-        next($collection);
+        $this->collection();
+        next($this->result);
     }
 
     /**
@@ -175,7 +175,8 @@ class Collection implements Movement\Collection
      */
     public function valid()
     {
-        return current($this->collection()) !== false;
+        $this->collection();
+        return isset($this->result[key($this->result)]) !== false;
     }
 
     /**
