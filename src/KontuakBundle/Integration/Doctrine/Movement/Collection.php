@@ -57,6 +57,18 @@ class Collection implements Movement\Collection
     }
 
     /**
+     * @param \DateTimeInterface $date
+     * @return \Kontuak\Movement\Collection
+     */
+    public function filterDateLessOrEqualTo(\DateTimeInterface $date)
+    {
+        $this->queryBuilder
+            ->andWhere('m.date <= :dateLessOrEqual')
+            ->setParameter('dateLessOrEqual', $date);
+        return $this;
+    }
+
+    /**
      * @return float
      * @todo insert the sum in the query
      */
