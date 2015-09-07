@@ -141,7 +141,7 @@ class Collection implements Movement\Collection
      */
     public function findById(Id $id)
     {
-        throw new NotImplementedException('KontuakBundle\Integration\Doctrine\Movement\Collection:findById not implementd');
+        return $this->repository->find($id->serialize());
     }
 
     /**

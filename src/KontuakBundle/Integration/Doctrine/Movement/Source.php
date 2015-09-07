@@ -41,4 +41,13 @@ class Source implements Movement\Source
     public function em() {
         return $this->em;
     }
+
+    /**
+     * @param Movement $movement
+     * @return void
+     */
+    public function remove(Movement $movement)
+    {
+        $this->em()->remove($movement);
+    }
 }

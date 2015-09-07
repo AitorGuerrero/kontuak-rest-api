@@ -99,4 +99,25 @@ class MovementsController extends FOSRestController implements ClassResourceInte
 
         return $response;
     }
+
+    /**
+     * @param $id
+     * @return HttpFoundation\Response
+     * @ApiDoc()
+     */
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $source = new Movement\Source($this->getDoctrine()->getEntityManager());
+        $useCase = new Interactors\Movement\Remove\UseCase($source);
+        $request = new Interactors\Movement\Remove\Request();
+        $request->id = $id;
+        $useCase->execute($request);
+        $em->flush();
+
+        $httpResponse = new HttpFoundation\Response();
+        $httpResponse->headers->set('Access-Control-Allow-Origin', $this->webClient);
+
+        return $httpResponse;
+    }
 }
