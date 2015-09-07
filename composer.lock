@@ -8,11 +8,11 @@
     "packages": [
         {
             "name": "aitor.guerrero/kontuak",
-            "version": "v2.1.1",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:aitorguerrero/kontuak.git",
-                "reference": "032011d090cf7ef332d179279f8d4c7b8ae7a8bb"
+                "reference": "9043744505b3fb71194c0e45ede4dfe309153bc5"
             },
             "require": {
                 "phpunit/phpunit": "4.8.*"
@@ -29,7 +29,7 @@
                     "email": "aguerrerolasarte@gmail.com"
                 }
             ],
-            "time": "2015-09-05 10:10:29"
+            "time": "2015-09-07 12:21:57"
         },
         {
             "name": "doctrine/annotations",
