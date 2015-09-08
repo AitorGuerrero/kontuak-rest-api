@@ -20,7 +20,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
  */
 class MovementsController extends FOSRestController implements ClassResourceInterface
 {
-    private $webClient = 'http://localhost:3000';
 
     /**
      * @param HttpFoundation\Request $httpRequest
@@ -50,7 +49,6 @@ class MovementsController extends FOSRestController implements ClassResourceInte
             $request->date = $movementResource->date;
             $useCase->execute($request);
             $response = new HttpFoundation\Response();
-            $response->headers->set('Access-Control-Allow-Origin', $this->webClient);
 //            $response->headers->set(
 //                'Location',
 //                $this->generateUrl(
@@ -63,7 +61,6 @@ class MovementsController extends FOSRestController implements ClassResourceInte
             return $response;
         }
         $view = $this->view($form);
-        $view->setHeader('Access-Control-Allow-Origin', $this->webClient);
         return $this->handleView($view);
     }
 
@@ -93,9 +90,7 @@ class MovementsController extends FOSRestController implements ClassResourceInte
         $request->limit = (int) $httpRequest->get('limit');
         $useCaseResponse = $useCase->execute($request);
 
-        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200, [
-            'Access-Control-Allow-Origin' => $this->webClient
-        ]);
+        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
 
         return $response;
     }
@@ -116,8 +111,17 @@ class MovementsController extends FOSRestController implements ClassResourceInte
         $em->flush();
 
         $httpResponse = new HttpFoundation\Response();
-        $httpResponse->headers->set('Access-Control-Allow-Origin', $this->webClient);
 
         return $httpResponse;
+    }
+
+    /**
+     * @ApiDoc()
+     * @param null $id
+     * @return HttpFoundation\Response
+     */
+    public function optionsAction($id)
+    {
+        return new HttpFoundation\Response('', 200);
     }
 }
