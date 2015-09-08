@@ -8,7 +8,6 @@ use KontuakBundle\Integration\Doctrine\Movement;
 use Kontuak\Interactors;
 use Symfony\Component\HttpFoundation;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\View\View;
@@ -18,8 +17,66 @@ use FOS\RestBundle\Controller\Annotations as Rest;
  * Class MovementsController
  * @package AppBundle\Controller
  */
-class MovementsController extends FOSRestController implements ClassResourceInterface
+class MovementsController extends FOSRestController
 {
+
+    /**
+     * @param HttpFoundation\Request $httpRequest
+     * @throws Interactors\InvalidArgumentException
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  resource=true,
+     *  requirements={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="integer",
+     *          "description"="How many objects to receive"
+     *      }
+     *  }
+     * )
+     */
+    public function getMovementsHistoryAction(HttpFoundation\Request $httpRequest)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $source = new Movement\Source($em);
+        $totalAmountCalculator = new TotalAmountCalculator($source);
+        $useCase = new Interactors\Movement\History\UseCase($source, $totalAmountCalculator);
+        $request = new Interactors\Movement\History\Request();
+        $request->limit = (int) $httpRequest->get('limit');
+        $useCaseResponse = $useCase->execute($request);
+
+        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
+
+        return $response;
+    }
+
+    /**
+     * @param $id
+     * @return HttpFoundation\Response
+     * @ApiDoc(
+     *  resource=true,
+     *  output="|AppBundle\Resources\Form\Resource"
+     * )
+     */
+    public function getMovementAction($id)
+    {
+        $source = new Movement\Source($this->getDoctrine()->getEntityManager());
+        $useCase = new Interactors\Movement\GetOne\UseCase($source);
+        $request = new Interactors\Movement\GetOne\Request();
+        $request->id = $id;
+        $response = $useCase->execute($request);
+
+        $movementResource = new Form\Resource\Movement();
+        $movementResource->id = $response->movement['id'];
+        $movementResource->amount = $response->movement['amount'];
+        $movementResource->concept = $response->movement['concept'];
+        $movementResource->date = $response->movement['date'];
+
+        $view = $this->view($movementResource);
+
+        return $this->handleView($view);
+    }
 
     /**
      * @param HttpFoundation\Request $httpRequest
@@ -30,7 +87,7 @@ class MovementsController extends FOSRestController implements ClassResourceInte
      *  output="\AppBundle\Resources\Form\Type\Movement"
      * )
      */
-    public function postAction(HttpFoundation\Request $httpRequest)
+    public function postMovementAction(HttpFoundation\Request $httpRequest)
     {
         $movementResource = new Form\Resource\Movement();
         $form = $this->createForm(new Form\Type\Movement(), $movementResource);
@@ -65,42 +122,11 @@ class MovementsController extends FOSRestController implements ClassResourceInte
     }
 
     /**
-     * @param HttpFoundation\Request $httpRequest
-     * @throws Interactors\InvalidArgumentException
-     * @return HttpFoundation\JsonResponse
-     * @ApiDoc(
-     *  resource=true,
-     *  requirements={
-     *      {
-     *          "name"="limit",
-     *          "dataType"="integer",
-     *          "description"="How many objects to receive"
-     *      }
-     *  }
-     * )
-     */
-    public function getHistoryAction(HttpFoundation\Request $httpRequest)
-    {
-        $em = $this->getDoctrine()->getEntityManager();
-
-        $source = new Movement\Source($em);
-        $totalAmountCalculator = new TotalAmountCalculator($source);
-        $useCase = new Interactors\Movement\History\UseCase($source, $totalAmountCalculator);
-        $request = new Interactors\Movement\History\Request();
-        $request->limit = (int) $httpRequest->get('limit');
-        $useCaseResponse = $useCase->execute($request);
-
-        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
-
-        return $response;
-    }
-
-    /**
      * @param $id
      * @return HttpFoundation\Response
      * @ApiDoc()
      */
-    public function deleteAction($id)
+    public function deleteMovementAction($id)
     {
         $em = $this->getDoctrine()->getEntityManager();
         $source = new Movement\Source($this->getDoctrine()->getEntityManager());
@@ -120,7 +146,7 @@ class MovementsController extends FOSRestController implements ClassResourceInte
      * @param null $id
      * @return HttpFoundation\Response
      */
-    public function optionsAction($id)
+    public function optionsMovementAction($id)
     {
         return new HttpFoundation\Response('', 200);
     }
