@@ -80,6 +80,7 @@ class MovementsController extends FOSRestController
 
     /**
      * @param HttpFoundation\Request $httpRequest
+     * @param string $id
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
      *  resource=true,
@@ -87,7 +88,7 @@ class MovementsController extends FOSRestController
      *  output="\AppBundle\Resources\Form\Type\Movement"
      * )
      */
-    public function postMovementAction(HttpFoundation\Request $httpRequest)
+    public function postMovementAction(HttpFoundation\Request $httpRequest, $id)
     {
         $movementResource = new Form\Resource\Movement();
         $form = $this->createForm(new Form\Type\Movement(), $movementResource);
@@ -100,22 +101,50 @@ class MovementsController extends FOSRestController
                 new \DateTime()
             );
             $request = new Interactors\Movement\Create\Request();
-            $request->id =  $movementResource->id;
+            $request->id =  $id;
             $request->amount = $movementResource->amount;
             $request->concept = $movementResource->concept;
             $request->date = $movementResource->date;
             $useCase->execute($request);
-            $response = new HttpFoundation\Response();
-//            $response->headers->set(
-//                'Location',
-//                $this->generateUrl(
-//                    'get_movements',
-//                    ['id' => $movementResource->id],
-//                    UrlGenerator::ABSOLUTE_URL
-//                )
-//            );
             $em->flush();
-            return $response;
+            return new HttpFoundation\JsonResponse([
+                'movement' => $movementResource
+            ]);
+        }
+        $view = $this->view($form);
+        return $this->handleView($view);
+    }
+
+    /**
+     * @param HttpFoundation\Request $httpRequest
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  resource=true,
+     *  input="\AppBundle\Resources\Form\Type\Movement",
+     *  output="\AppBundle\Resources\Form\Type\Movement"
+     * )
+     */
+    public function putMovementsAction(HttpFoundation\Request $httpRequest, $id)
+    {
+        $movementResource = new Form\Resource\Movement();
+        $form = $this->createForm(new Form\Type\Movement(), $movementResource, ['method' => 'PUT']);
+        $form->handleRequest($httpRequest);
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $useCase = new Interactors\Movement\Update\UseCase(
+                new Movement\Source($em),
+                new \DateTime()
+            );
+            $request = new Interactors\Movement\Update\Request();
+            $request->id =  $id;
+            $request->amount = $movementResource->amount;
+            $request->concept = $movementResource->concept;
+            $request->date = $movementResource->date;
+            $useCase->execute($request);
+            $em->flush();
+            return new HttpFoundation\JsonResponse([
+                'movement' => $movementResource
+            ]);
         }
         $view = $this->view($form);
         return $this->handleView($view);

@@ -48,6 +48,11 @@ class Source implements Movement\Source
      */
     public function remove(Movement $movement)
     {
-        $this->em()->remove($movement);
+        $this->em->remove($movement);
+    }
+
+    public function persist(Movement $movement)
+    {
+        $this->em->persist($movement);
     }
 }
