@@ -52,6 +52,25 @@ class MovementsController extends FOSRestController
     }
 
     /**
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  resource=true
+     * )
+     */
+    public function getMovementsComingAction()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $source = new Movement\Source($em);
+        $useCase = new Interactors\Movement\Coming\UseCase($source, new \DateTime());
+        $useCaseResponse = $useCase->execute();
+
+        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
+
+        return $response;
+    }
+
+    /**
      * @param $id
      * @return HttpFoundation\Response
      * @ApiDoc(

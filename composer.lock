@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:aitorguerrero/kontuak.git",
-                "reference": "6a4dcbb793dcf24acad5b6b154811c5a26b1fdd9"
+                "reference": "0d1a787efac021fda7a4643105b0205974c04f68"
             },
             "require": {
                 "phpunit/phpunit": "4.8.*"
@@ -29,7 +29,7 @@
                     "email": "aguerrerolasarte@gmail.com"
                 }
             ],
-            "time": "2015-09-11 11:13:52"
+            "time": "2015-09-11 12:08:03"
         },
         {
             "name": "doctrine/annotations",

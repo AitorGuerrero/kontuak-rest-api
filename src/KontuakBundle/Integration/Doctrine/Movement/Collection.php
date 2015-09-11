@@ -199,7 +199,8 @@ class Collection implements Movement\Collection
      */
     public function rewind()
     {
-        reset($this->collection());
+        $collection = $this->collection();
+        reset($collection);
     }
 
     /**
@@ -224,5 +225,17 @@ class Collection implements Movement\Collection
                 ->getResult();
         }
         return $this->result;
+    }
+
+    /**
+     * @param \DateTime $timeStamp
+     * @return \Kontuak\Movement\Collection
+     */
+    public function filterByDateIsPostThan(\DateTime $timeStamp)
+    {
+        $this->queryBuilder
+            ->andWhere('m.date > :dateIsPostThan')
+            ->setParameter('dateIsPostThan', $timeStamp);
+        return $this;
     }
 }
