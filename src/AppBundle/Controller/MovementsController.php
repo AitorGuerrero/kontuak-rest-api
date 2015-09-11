@@ -62,7 +62,7 @@ class MovementsController extends FOSRestController
         $em = $this->getDoctrine()->getEntityManager();
 
         $source = new Movement\Source($em);
-        $useCase = new Interactors\Movement\Coming\UseCase($source, new \DateTime());
+        $useCase = new Interactors\Movement\Coming\UseCase($source, new \DateTime(), new TotalAmountCalculator($source));
         $useCaseResponse = $useCase->execute();
 
         $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
