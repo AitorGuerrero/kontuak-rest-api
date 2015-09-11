@@ -99,7 +99,6 @@ class MovementsController extends FOSRestController
 
     /**
      * @param HttpFoundation\Request $httpRequest
-     * @param string $id
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
      *  resource=true,
@@ -107,7 +106,7 @@ class MovementsController extends FOSRestController
      *  output="\AppBundle\Resources\Form\Type\Movement"
      * )
      */
-    public function postMovementAction(HttpFoundation\Request $httpRequest, $id)
+    public function postMovementAction(HttpFoundation\Request $httpRequest)
     {
         $movementResource = new Form\Resource\Movement();
         $form = $this->createForm(new Form\Type\Movement(), $movementResource);
@@ -120,7 +119,7 @@ class MovementsController extends FOSRestController
                 new \DateTime()
             );
             $request = new Interactors\Movement\Create\Request();
-            $request->id =  $id;
+            $request->id =  $movementResource->id;
             $request->amount = $movementResource->amount;
             $request->concept = $movementResource->concept;
             $request->date = $movementResource->date;
