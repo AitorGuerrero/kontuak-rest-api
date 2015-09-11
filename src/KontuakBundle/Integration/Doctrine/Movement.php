@@ -16,6 +16,6 @@ class Movement extends \Kontuak\Movement
 
     public function mapToDomain()
     {
-        $this->id = Id::fromString($this->doctrineId);
+        $this->id = new Id($this->doctrineId);
     }
 }
