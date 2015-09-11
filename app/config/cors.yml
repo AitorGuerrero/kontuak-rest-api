@@ -1,0 +1,14 @@
+nelmio_cors:
+    defaults:
+        allow_origin: ['http://localhost:3000']
+        allow_headers: ['X-Custom-Auth']
+        allow_methods: ['OPTIONS']
+        expose_headers: []
+        max_age: 3600
+        hosts: []
+        origin_regex: false
+    paths:
+        '^/movements':
+            allow_methods: ['POST', 'OPTIONS', 'DELETE', 'PUT']
+        '^/movements/history':
+            allow_methods: ['GET']
