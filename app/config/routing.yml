@@ -1,6 +1,9 @@
 movements:
     type:     rest
     resource: AppBundle\Controller\MovementsController
+periodicalMovements:
+    type:     rest
+    resource: AppBundle\Controller\PeriodicalMovementsController
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /api/doc
