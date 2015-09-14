@@ -2,15 +2,15 @@
 
 namespace KontuakBundle\Integration\Doctrine\Movement;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Kontuak\Movement;
 
 class Source implements Movement\Source
 {
-    /** @var EntityManagerInterface */
+    /** @var ObjectManager */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ObjectManager $em)
     {
         $this->em = $em;
     }
@@ -35,6 +35,7 @@ class Source implements Movement\Source
             $movement->date(),
             $movement->created()
         );
+        $doctrineMovement->assignToPeriodicalMovement($movement->periodicalMovement());
         $this->em->persist($doctrineMovement);
     }
 

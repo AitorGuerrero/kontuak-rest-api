@@ -2,11 +2,14 @@
 
 namespace AppBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
+use Kontuak\Interactors\PeriodicalMovement\Create;
+use Kontuak\Interactors\PeriodicalMovement\Apply;
+use Kontuak\PeriodicalMovement\MovementsGenerator;
+use Kontuak\Movement\Id\Generator;
 use KontuakBundle\Integration\Doctrine\PeriodicalMovement\Source;
-use \Kontuak\Interactors\PeriodicalMovement\Create;
 use Symfony\Component\HttpFoundation;
 use AppBundle\Resources\Form;
+use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 /**
@@ -57,12 +60,33 @@ class PeriodicalMovementsController extends FOSRestController
     }
 
     /**
-     * @ApiDoc(resource=true)
-     * @param $id
+     * @ApiDoc
      */
-    public function putPeriodical_movementsAction($id)
+    public function putPeriodical_movementsGenerate_movementsAction()
     {
+        $timeStamp = new \DateTime();
+        $em = $this->getDoctrine()->getManager();
+        $movementsSource = new \KontuakBundle\Integration\Doctrine\Movement\Source($em);
+        $periodicalMovementsSource = new Source($em);
+        $movementsGenerator = new MovementsGenerator($movementsSource, new Generator(), $timeStamp);
+        $useCase = new Apply\UseCase($movementsSource, $periodicalMovementsSource, $timeStamp, $movementsGenerator);
+        $useCase->execute();
+        $em->flush();
 
+        return new HttpFoundation\Response();
+    }
+
+    /**
+     * @ApiDoc(
+     *  resource=true,
+     *  input="\AppBundle\Resources\Form\Type\PeriodicalMovement"
+     * )
+     * @param $id
+     * @param HttpFoundation\Request $httpRequest
+     * @return HttpFoundation\JsonResponse
+     */
+    public function putPeriodical_movementsAction($id, HttpFoundation\Request $httpRequest)
+    {
     }
 
     /**

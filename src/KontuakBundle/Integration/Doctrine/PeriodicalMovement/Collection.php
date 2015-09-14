@@ -37,6 +37,6 @@ class Collection implements BaseCollection
      */
     public function all()
     {
-        return $this->queryBuilder->getQuery()->getArrayResult();
+        return $this->queryBuilder->getQuery()->execute();
     }
 }

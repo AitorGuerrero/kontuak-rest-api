@@ -34,10 +34,10 @@ class PeriodicalMovement extends BasePeriodicalMovement
 
     public function mapToDomain()
     {
-        $this->id = PeriodicalMovementId::fromString($this->doctrineId);
+        $this->id = new BasePeriodicalMovement\Id($this->doctrineId);
         switch ($this->periodType) {
             case self::TYPE_DAY:
-               $period = new Period\DaysPeriod($this->periodAmount);
+                $period = new Period\DaysPeriod($this->periodAmount);
                 break;
             case self::TYPE_MONTH_DAY:
                 $period = new Period\MonthDayPeriod($this->periodAmount);

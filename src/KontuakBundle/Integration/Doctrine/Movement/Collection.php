@@ -130,8 +130,8 @@ class Collection implements Movement\Collection
     public function filterByPeriodicalMovement(PeriodicalMovement $periodicalMovement)
     {
         $this->queryBuilder
-            ->andWhere('m.periodicalMovementId = :periodicalMovementIs')
-            ->setParameter('periodicalMovementIs', $periodicalMovement->id()->serialize());
+            ->andWhere('m.periodicalMovement = :periodicalMovementIs')
+            ->setParameter('periodicalMovementIs', $periodicalMovement);
         return $this;
     }
 
