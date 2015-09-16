@@ -1,0 +1,13 @@
+services:
+  timestamp:
+    class: DateTime
+
+  kontuak.movement.source: "@kontuak.integration_doctrine_movement.source"
+  kontuak.periodical_movement.source: "@kontuak.integration_doctrine_periodical_movement.source"
+
+  kontuak.integration_doctrine_movement.source:
+    class: KontuakBundle\Integration\Doctrine\Movement\Source
+    arguments: [ @doctrine.orm.entity_manager ]
+  kontuak.integration_doctrine_periodical_movement.source:
+    class: KontuakBundle\Integration\Doctrine\PeriodicalMovement\Source
+    arguments: [ @doctrine.orm.entity_manager ]

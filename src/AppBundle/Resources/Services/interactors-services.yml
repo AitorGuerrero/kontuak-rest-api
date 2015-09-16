@@ -1,0 +1,21 @@
+services:
+  kontuak.interactors.movement.history.use_case:
+    class: Kontuak\Interactors\Movement\History\UseCase
+    arguments: [@kontuak.movement.source,@kontuak.movement.total_amount_calculator,@timestamp]
+  kontuak.interactors.movement.coming.use_case:
+    class: Kontuak\Interactors\Movement\Coming\UseCase
+    arguments: [ @kontuak.movement.source, @timestamp, @kontuak.movement.total_amount_calculator ]
+  kontuak.interactors.movement.create.use_case:
+    class: Kontuak\Interactors\Movement\Create\UseCase
+    arguments: [ @kontuak.movement.source, @kontuak.periodical_movement.source, @kontuak.periodical_movement.id.generator, @kontuak.periodical_movement.movements_generator, @timestamp]
+  kontuak.interactors.movement.create.request:
+    class: Kontuak\Interactors\Movement\Create\Request
+  kontuak.interactors.movement.get_one.use_case:
+    class: Kontuak\Interactors\Movement\GetOne\UseCase
+    arguments: [ @kontuak.movement.source ]
+  kontuak.interactors.movement.remove.use_case:
+    class: Kontuak\Interactors\Movement\Remove\UseCase
+    arguments: [ @kontuak.movement.source ]
+  kontuak.interactors.periodical_movement.apply.use_case:
+    class: Kontuak\Interactors\PeriodicalMovement\Apply\UseCase
+    arguments: [ @kontuak.movement.source, @kontuak.periodical_movement.source, @timestamp, @kontuak.periodical_movement.movements_generator]

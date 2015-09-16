@@ -4,14 +4,18 @@ namespace AppBundle\Controller;
 
 use AppBundle\Resources\Form;
 use Kontuak\Movement\TotalAmountCalculator;
+use Kontuak\PeriodicalMovement\Id\Generator;
+use Kontuak\PeriodicalMovement\MovementsGenerator;
 use KontuakBundle\Integration\Doctrine\Movement;
 use Kontuak\Interactors;
+use KontuakBundle\Integration\Doctrine\PeriodicalMovement\Source;
 use Symfony\Component\HttpFoundation;
 use FOS\RestBundle\Controller\FOSRestController;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class MovementsController
@@ -37,11 +41,7 @@ class MovementsController extends FOSRestController
      */
     public function getMovementsHistoryAction(HttpFoundation\Request $httpRequest)
     {
-        $em = $this->getDoctrine()->getEntityManager();
-
-        $source = new Movement\Source($em);
-        $totalAmountCalculator = new TotalAmountCalculator($source);
-        $useCase = new Interactors\Movement\History\UseCase($source, $totalAmountCalculator);
+        $useCase = $this->get('kontuak.interactors.movement.history.use_case');
         $request = new Interactors\Movement\History\Request();
         $request->limit = (int) $httpRequest->get('limit');
         $useCaseResponse = $useCase->execute($request);
@@ -59,10 +59,7 @@ class MovementsController extends FOSRestController
      */
     public function getMovementsComingAction()
     {
-        $em = $this->getDoctrine()->getEntityManager();
-
-        $source = new Movement\Source($em);
-        $useCase = new Interactors\Movement\Coming\UseCase($source, new \DateTime(), new TotalAmountCalculator($source));
+        $useCase = $this->get('kontuak.interactors.movement.coming.use_case');
         $request = new Interactors\Movement\Coming\Request();
         $request->limit = 3;
         $useCaseResponse = $useCase->execute($request);
@@ -82,8 +79,7 @@ class MovementsController extends FOSRestController
      */
     public function getMovementAction($id)
     {
-        $source = new Movement\Source($this->getDoctrine()->getEntityManager());
-        $useCase = new Interactors\Movement\GetOne\UseCase($source);
+        $useCase = $this->get('kontuak.interactors.movement.get_one.use_case');
         $request = new Interactors\Movement\GetOne\Request();
         $request->id = $id;
         $response = $useCase->execute($request);
@@ -115,24 +111,27 @@ class MovementsController extends FOSRestController
         $form->handleRequest($httpRequest);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
-            $useCase = new Interactors\Movement\Create\UseCase(
-                new Movement\Source($em),
-                new \DateTime()
-            );
-            $request = new Interactors\Movement\Create\Request();
+            $useCase = $this->get('kontuak.interactors.movement.create.use_case');
+            $request = $this->get('kontuak.interactors.movement.create.request');
             $request->id =  $movementResource->id;
             $request->amount = $movementResource->amount;
             $request->concept = $movementResource->concept;
             $request->date = $movementResource->date;
             $useCase->execute($request);
-            $em->flush();
+            $this->getDoctrine()->getEntityManager()->flush();
             return new HttpFoundation\JsonResponse([
                 'movement' => $movementResource
             ]);
         }
         $view = $this->view($form);
         return $this->handleView($view);
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'csrf_protection' => false,
+        ]);
     }
 
     /**
@@ -178,8 +177,7 @@ class MovementsController extends FOSRestController
     public function deleteMovementAction($id)
     {
         $em = $this->getDoctrine()->getEntityManager();
-        $source = new Movement\Source($this->getDoctrine()->getEntityManager());
-        $useCase = new Interactors\Movement\Remove\UseCase($source);
+        $useCase = $this->get('kontuak.interactors.movement.remove.use_case');
         $request = new Interactors\Movement\Remove\Request();
         $request->id = $id;
         $useCase->execute($request);
