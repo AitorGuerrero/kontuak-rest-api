@@ -18,7 +18,8 @@ class Movement extends AbstractType
             ->add('id', 'text')
             ->add('amount', 'number')
             ->add('concept', 'text')
-            ->add('date', 'text');
+            ->add('date', 'text')
+        ;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

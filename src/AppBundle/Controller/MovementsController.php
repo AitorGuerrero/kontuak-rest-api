@@ -74,7 +74,7 @@ class MovementsController extends FOSRestController
      * @return HttpFoundation\Response
      * @ApiDoc(
      *  resource=true,
-     *  output="|AppBundle\Resources\Form\Resource"
+     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
      * )
      */
     public function getMovementAction($id)
@@ -100,11 +100,11 @@ class MovementsController extends FOSRestController
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
      *  resource=true,
-     *  input="\AppBundle\Resources\Form\Type\Movement",
-     *  output="\AppBundle\Resources\Form\Type\Movement"
+     *  input="\AppBundle\Resources\Form\Type\NewMovement",
+     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
      * )
      */
-    public function postMovementAction(HttpFoundation\Request $httpRequest)
+    public function postMovementAction($id, HttpFoundation\Request $httpRequest)
     {
         $movementResource = new Form\Resource\Movement();
         $form = $this->createForm(new Form\Type\Movement(), $movementResource);
@@ -113,7 +113,7 @@ class MovementsController extends FOSRestController
         if ($form->isValid()) {
             $useCase = $this->get('kontuak.interactors.movement.create.use_case');
             $request = $this->get('kontuak.interactors.movement.create.request');
-            $request->id =  $movementResource->id;
+            $request->id =  $id;
             $request->amount = $movementResource->amount;
             $request->concept = $movementResource->concept;
             $request->date = $movementResource->date;
@@ -140,7 +140,7 @@ class MovementsController extends FOSRestController
      * @ApiDoc(
      *  resource=true,
      *  input="\AppBundle\Resources\Form\Type\Movement",
-     *  output="\AppBundle\Resources\Form\Type\Movement"
+     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
      * )
      */
     public function putMovementsAction(HttpFoundation\Request $httpRequest, $id)
@@ -172,7 +172,9 @@ class MovementsController extends FOSRestController
     /**
      * @param $id
      * @return HttpFoundation\Response
-     * @ApiDoc()
+     * @ApiDoc(
+     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
+     * )
      */
     public function deleteMovementAction($id)
     {
