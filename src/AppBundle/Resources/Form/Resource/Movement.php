@@ -8,7 +8,6 @@ class Movement
 {
     /**
      * @Assert\Uuid
-     * @Assert\NotBlank()
      * @var string
      */
     public $id;

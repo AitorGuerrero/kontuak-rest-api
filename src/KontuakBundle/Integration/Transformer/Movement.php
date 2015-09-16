@@ -2,7 +2,9 @@
 
 namespace KontuakBundle\Integration\Transformer;
 
-class Movement 
+use Kontuak\Movement\Transformer;
+
+class Movement implements Transformer
 {
     /** @var PeriodicalMovement */
     private $periodicalMovementTransformer;

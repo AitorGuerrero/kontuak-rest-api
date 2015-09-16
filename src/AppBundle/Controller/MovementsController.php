@@ -121,28 +121,10 @@ class MovementsController extends FOSRestController
                 $request->periodType = $period['type'];
                 $request->periodAmount = $period['amount'];
             }
-            $response = $useCase->execute($request);
+            $movement = $useCase->execute($request);
             $this->getDoctrine()->getEntityManager()->flush();
-            $movementResource->amount = $response->movementAmount;
-            $movementResource->concept = $response->movementConcept;
-            $movementResource->date = $response->movementDate;
-            $movementResource->id = $response->movementId;
-            if ($response->periodicalMovementId) {
-                $periodResource = new Form\Resource\PeriodicalMovement\Period();
-                $periodResource->amount = $response->periodicalMovementAmount;
-                $periodResource->type = $response->periodicalMovementType;
-                $periodicalMovementResource = new Form\Resource\PeriodicalMovement();
-                $periodicalMovementResource->id = $response->periodicalMovementId;
-                $periodicalMovementResource->amount = $response->movementAmount;
-                $periodicalMovementResource->concept = $response->movementConcept;
-                $periodicalMovementResource->starts = $response->movementDate;
-                $periodicalMovementResource->period = $periodResource;
-                $movementResource->periodicalMovement = $periodicalMovementResource;
-            }
 
-            return new HttpFoundation\JsonResponse([
-                $movementResource
-            ]);
+            return new HttpFoundation\JsonResponse($movement);
         }
         $view = $this->view($form);
         return $this->handleView($view);

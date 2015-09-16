@@ -4,6 +4,9 @@ services:
 
   kontuak.movement.source: "@kontuak.integration_doctrine_movement.source"
   kontuak.periodical_movement.source: "@kontuak.integration_doctrine_periodical_movement.source"
+  kontuak.transformer.period: "@kontuak.integration_transformer.period"
+  kontuak.transformer.periodical_movement: "@kontuak.integration_transformer.periodical_movement"
+  kontuak.transformer.movement: "@kontuak.integration_transformer.movement"
 
   kontuak.integration_doctrine_movement.source:
     class: KontuakBundle\Integration\Doctrine\Movement\Source
@@ -11,3 +14,11 @@ services:
   kontuak.integration_doctrine_periodical_movement.source:
     class: KontuakBundle\Integration\Doctrine\PeriodicalMovement\Source
     arguments: [ @doctrine.orm.entity_manager ]
+  kontuak.integration_transformer.period:
+    class: KontuakBundle\Integration\Transformer\Period
+  kontuak.integration_transformer.periodical_movement:
+    class: KontuakBundle\Integration\Transformer\PeriodicalMovement
+    arguments: [ @kontuak.integration_transformer.period ]
+  kontuak.integration_transformer.movement:
+    class: KontuakBundle\Integration\Transformer\Movement
+    arguments: [ @kontuak.integration_transformer.periodical_movement ]

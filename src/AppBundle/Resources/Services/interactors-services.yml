@@ -7,7 +7,7 @@ services:
     arguments: [ @kontuak.movement.source, @timestamp, @kontuak.movement.total_amount_calculator ]
   kontuak.interactors.movement.create.use_case:
     class: Kontuak\Interactors\Movement\Create\UseCase
-    arguments: [ @kontuak.movement.source, @kontuak.periodical_movement.source, @kontuak.periodical_movement.id.generator, @kontuak.periodical_movement.movements_generator, @timestamp]
+    arguments: [ @kontuak.movement.source, @kontuak.periodical_movement.source, @kontuak.periodical_movement.id.generator, @kontuak.periodical_movement.movements_generator, @timestamp, @kontuak.transformer.movement]
   kontuak.interactors.movement.create.request:
     class: Kontuak\Interactors\Movement\Create\Request
   kontuak.interactors.movement.get_one.use_case:
