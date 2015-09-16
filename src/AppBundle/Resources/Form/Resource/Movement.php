@@ -28,4 +28,9 @@ class Movement
      * @var \DateTime
      */
     public $date;
+
+    /**
+     * @var PeriodicalMovement
+     */
+    public $periodicalMovement;
 }

@@ -29,7 +29,6 @@ class MovementsController extends FOSRestController
      * @throws Interactors\InvalidArgumentException
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
-     *  resource=true,
      *  requirements={
      *      {
      *          "name"="limit",
@@ -54,7 +53,6 @@ class MovementsController extends FOSRestController
     /**
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
-     *  resource=true
      * )
      */
     public function getMovementsComingAction()
@@ -117,10 +115,33 @@ class MovementsController extends FOSRestController
             $request->amount = $movementResource->amount;
             $request->concept = $movementResource->concept;
             $request->date = $movementResource->date;
-            $useCase->execute($request);
+            $period = $httpRequest->get('period');
+            if($period) {
+                $request->isPeriodical = true;
+                $request->periodType = $period['type'];
+                $request->periodAmount = $period['amount'];
+            }
+            $response = $useCase->execute($request);
             $this->getDoctrine()->getEntityManager()->flush();
+            $movementResource->amount = $response->movementAmount;
+            $movementResource->concept = $response->movementConcept;
+            $movementResource->date = $response->movementDate;
+            $movementResource->id = $response->movementId;
+            if ($response->periodicalMovementId) {
+                $periodResource = new Form\Resource\PeriodicalMovement\Period();
+                $periodResource->amount = $response->periodicalMovementAmount;
+                $periodResource->type = $response->periodicalMovementType;
+                $periodicalMovementResource = new Form\Resource\PeriodicalMovement();
+                $periodicalMovementResource->id = $response->periodicalMovementId;
+                $periodicalMovementResource->amount = $response->movementAmount;
+                $periodicalMovementResource->concept = $response->movementConcept;
+                $periodicalMovementResource->starts = $response->movementDate;
+                $periodicalMovementResource->period = $periodResource;
+                $movementResource->periodicalMovement = $periodicalMovementResource;
+            }
+
             return new HttpFoundation\JsonResponse([
-                'movement' => $movementResource
+                $movementResource
             ]);
         }
         $view = $this->view($form);
