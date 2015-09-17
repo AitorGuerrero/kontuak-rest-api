@@ -4,7 +4,7 @@ namespace KontuakBundle\Integration\Doctrine;
 
 use Kontuak\Period;
 use Kontuak\PeriodicalMovement as BasePeriodicalMovement;
-use Kontuak\PeriodicalMovementId;
+use Kontuak\PeriodicalMovement\Id;
 
 class PeriodicalMovement extends BasePeriodicalMovement
 {
@@ -20,6 +20,16 @@ class PeriodicalMovement extends BasePeriodicalMovement
     /** @var int */
     protected $periodAmount;
 
+    public function __construct(
+        Id $id,
+        $amount,
+        $concept,
+        \DateTime $starts,
+        Period $period
+    ) {
+        parent::__construct($id, $amount, $concept, $starts, $period);
+    }
+
     private static $periodTypeMapping = [
         self::TYPE_DAY => Period::TYPE_DAY,
         self::TYPE_MONTH_DAY => Period::TYPE_MONTH_DAY
@@ -34,6 +44,7 @@ class PeriodicalMovement extends BasePeriodicalMovement
 
     public function mapToDomain()
     {
+        $period = null;
         $this->id = new BasePeriodicalMovement\Id($this->doctrineId);
         switch ($this->periodType) {
             case self::TYPE_DAY:

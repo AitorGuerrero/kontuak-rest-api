@@ -5,7 +5,7 @@ services:
     class: Kontuak\Movement\Id\Generator
   kontuak.movement.total_amount_calculator:
     class: Kontuak\Movement\TotalAmountCalculator
-    arguments: [ @kontuak.integration_doctrine_movement.source ]
+    arguments: [ @kontuak.source.movement ]
   kontuak.periodical_movement.movements_generator:
     class: Kontuak\PeriodicalMovement\MovementsGenerator
-    arguments: [ @kontuak.movement.source, @kontuak.movement.id.generator, @timestamp ]
+    arguments: [ @kontuak.source.movement, @kontuak.movement.id.generator, @kontuak.factory.movement, @timestamp ]

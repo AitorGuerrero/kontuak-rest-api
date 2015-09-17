@@ -1,21 +1,21 @@
 services:
   kontuak.interactors.movement.history.use_case:
     class: Kontuak\Interactors\Movement\History\UseCase
-    arguments: [@kontuak.movement.source,@kontuak.movement.total_amount_calculator,@timestamp]
+    arguments: [@kontuak.source.movement, @kontuak.movement.total_amount_calculator, @timestamp]
   kontuak.interactors.movement.coming.use_case:
     class: Kontuak\Interactors\Movement\Coming\UseCase
-    arguments: [ @kontuak.movement.source, @timestamp, @kontuak.movement.total_amount_calculator ]
+    arguments: [ @kontuak.source.movement, @timestamp, @kontuak.movement.total_amount_calculator ]
   kontuak.interactors.movement.create.use_case:
     class: Kontuak\Interactors\Movement\Create\UseCase
-    arguments: [ @kontuak.movement.source, @kontuak.periodical_movement.source, @kontuak.periodical_movement.id.generator, @kontuak.periodical_movement.movements_generator, @timestamp, @kontuak.transformer.movement]
+    arguments: [ @kontuak.source.movement, @kontuak.source.periodical_movement, @kontuak.periodical_movement.id.generator, @kontuak.periodical_movement.movements_generator, @timestamp, @kontuak.transformer.movement, @kontuak.factory.movement, @kontuak.factory.periodical_movement]
   kontuak.interactors.movement.create.request:
     class: Kontuak\Interactors\Movement\Create\Request
   kontuak.interactors.movement.get_one.use_case:
     class: Kontuak\Interactors\Movement\GetOne\UseCase
-    arguments: [ @kontuak.movement.source ]
+    arguments: [ @kontuak.source.movement ]
   kontuak.interactors.movement.remove.use_case:
     class: Kontuak\Interactors\Movement\Remove\UseCase
-    arguments: [ @kontuak.movement.source ]
+    arguments: [ @kontuak.source.movement ]
   kontuak.interactors.periodical_movement.apply.use_case:
     class: Kontuak\Interactors\PeriodicalMovement\Apply\UseCase
-    arguments: [ @kontuak.movement.source, @kontuak.periodical_movement.source, @timestamp, @kontuak.periodical_movement.movements_generator]
+    arguments: [ @kontuak.source.movement, @kontuak.source.periodical_movement, @timestamp, @kontuak.periodical_movement.movements_generator]

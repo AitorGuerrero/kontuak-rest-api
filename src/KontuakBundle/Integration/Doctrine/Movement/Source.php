@@ -35,7 +35,9 @@ class Source implements Movement\Source
             $movement->date(),
             $movement->created()
         );
-        $doctrineMovement->assignToPeriodicalMovement($movement->periodicalMovement());
+        if($movement->periodicalMovement()) {
+            $doctrineMovement->assignToPeriodicalMovement($movement->periodicalMovement());
+        }
         $this->em->persist($doctrineMovement);
     }
 
