@@ -9,7 +9,7 @@ trait IterableCollection
     /** @var array */
     protected $result;
     /** @var QueryBuilder */
-    private $queryBuilder;
+    protected $queryBuilder;
 
     /**
      * (PHP 5 &gt;= 5.0.0)<br/>

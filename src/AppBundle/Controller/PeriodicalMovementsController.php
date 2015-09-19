@@ -17,7 +17,6 @@ class PeriodicalMovementsController extends FOSRestController
 {
 
     /**
-     * Returns a list of periodical movements
      * @ApiDoc(
      *  resource=true,
      *  parameters={
@@ -31,39 +30,83 @@ class PeriodicalMovementsController extends FOSRestController
      *          "dataType"="integer",
      *          "required"=true
      *      }
-     *  },
-     *  tags={"not implemented"}
+     *  }
      * )
+     * @param HttpFoundation\Request $httpRequest
+     * @return HttpFoundation\Response
      */
-    public function getPeriodical_movementsAction()
+    public function getPeriodical_movementsAction(HttpFoundation\Request $httpRequest)
     {
+        $useCase = $this->get('kontuak.interactors.periodical_movement.get_all');
+        $request = $useCase->newRequest();
+        $limit = $httpRequest->get('limit');
+        $page = $httpRequest->get('page');
+        if ($limit) {
+            $request->limit = $limit;
+        }
+        if ($page) {
+            $request->page = $page;
+        }
 
+        return $this->handleView($this->view($useCase->execute($request)));
     }
 
     /**
-     * @ApiDoc(tags={"not implemented"})
+     * @ApiDoc()
      * @param $id
+     * @return HttpFoundation\Response
      */
     public function getPeriodical_movementAction($id)
     {
+        $useCase = $this->get('kontuak.interactors.periodical_movement.get_one');
+        $request = $useCase->newRequest();
+        $request->id = $id;
 
+        $response = $useCase->execute($request);
+
+        return $this->handleView($this->view($response->periodicalMovement));
     }
 
     /**
-     * Saves a new periodical movement
      * @ApiDoc(
-     *  tags={"not implemented"},
-     *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\NewPeriodicalMovement",
+     *  input="AppBundle\Resources\Form\Type\PeriodicalMovement",
      *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement"
      * )
+     * @param HttpFoundation\Request $httpRequest
+     * @throws \Kontuak\Interactors\Exception\EntityNotFound
+     * @return HttpFoundation\Response
      */
-    public function postPeriodical_movementAction()
+    public function postPeriodical_movementAction(HttpFoundation\Request $httpRequest)
     {
+        $resource = new Form\Resource\PeriodicalMovement();
+        $form = $this->createForm(new Form\Type\PeriodicalMovement(), $resource);
+        $form->handleRequest($httpRequest);
 
+        if (!$form->isValid()) {
+            $view = $this->view($form);
+            return $this->handleView($view);
+        }
+        $useCase = $this->get('kontuak.interactors.periodical_movement.create');
+        $request = $useCase->newRequest();
+        $request->id = $resource->id;
+        $request->amount = $resource->amount;
+        $request->concept = $resource->concept;
+        $request->starts = $resource->starts;
+        $request->periodAmount = $resource->period->amount;
+        $request->periodType = $resource->period->type;
+
+        $useCase->execute($request);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        $useCase = $this->get('kontuak.interactors.periodical_movement.get_one');
+        $request = $useCase->newRequest();
+        $request->id = $resource->id;
+        $periodicalMovement = $useCase->execute($request);
+
+        return $this->handleView($this->view($periodicalMovement->periodicalMovement));
     }
 
     /**
-     * Form required to post a new periodical movement
      * @ApiDoc(
      *  tags={"not implemented"},
      *  output="AppBundle\Resources\Form\Type\PeriodicalMovement\NewPeriodicalMovement"
@@ -77,14 +120,41 @@ class PeriodicalMovementsController extends FOSRestController
     /**
      * @ApiDoc(
      *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
-     *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement",
-     *  tags={"not implemented"}
+     *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement"
      * )
      * @param $id
+     * @param HttpFoundation\Request $httpRequest
+     * @throws \Kontuak\Interactors\Exception\EntityNotFound
+     * @return HttpFoundation\Response
      */
-    public function putPeriodical_movementAction($id)
+    public function putPeriodical_movementAction($id, HttpFoundation\Request $httpRequest)
     {
+        $resource = new Form\Resource\PeriodicalMovement();
+        $form = $this->createForm(new Form\Type\PeriodicalMovement(), $resource);
+        $form->handleRequest($httpRequest);
 
+        if (!$form->isValid()) {
+            $view = $this->view($form);
+            return $this->handleView($view);
+        }
+        $useCase = $this->get('kontuak.interactors.periodical_movement.update');
+        $request = $useCase->newRequest();
+        $request->id = $id;
+        $request->amount = $resource->amount;
+        $request->concept = $resource->concept;
+        $request->starts = $resource->starts;
+        $request->periodAmount = $resource->period->amount;
+        $request->periodType = $resource->period->type;
+
+        $useCase->execute($request);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        $useCase = $this->get('kontuak.interactors.periodical_movement.get_one');
+        $request = $useCase->newRequest();
+        $request->id = $resource->id;
+        $periodicalMovement = $useCase->execute($request);
+
+        return $this->handleView($this->view($periodicalMovement->periodicalMovement));
     }
 
     /**
@@ -93,7 +163,6 @@ class PeriodicalMovementsController extends FOSRestController
      */
     public function deletePeriodical_movementAction($id)
     {
-
     }
 
     /**
@@ -109,7 +178,6 @@ class PeriodicalMovementsController extends FOSRestController
     }
 
     /**
-     * Form to patch a periodical movement
      * @ApiDoc(
      *  output="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
      *  tags={"not implemented"}

@@ -12,9 +12,6 @@ class Collection implements BaseCollection
 {
     use IterableCollection;
 
-    /** @var QueryBuilder */
-    private $queryBuilder;
-
     public function __construct(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;

@@ -21,3 +21,16 @@ services:
   kontuak.interactors.movement.update:
     class: Kontuak\Interactors\Movement\Update\UseCase
     arguments: [ @kontuak.integration_doctrine_movement.source ]
+
+  kontuak.interactors.periodical_movement.create:
+    class: Kontuak\Interactors\PeriodicalMovement\Create\UseCase
+    arguments: [ @kontuak.factory.periodical_movement, @kontuak.source.periodical_movement ]
+  kontuak.interactors.periodical_movement.get_one:
+    class: Kontuak\Interactors\PeriodicalMovement\GetOne\UseCase
+    arguments: [ @kontuak.source.periodical_movement, @kontuak.transformer.periodical_movement ]
+  kontuak.interactors.periodical_movement.get_all:
+    class: Kontuak\Interactors\PeriodicalMovement\GetAll\UseCase
+    arguments: [ @kontuak.source.periodical_movement, @kontuak.transformer.periodical_movement ]
+  kontuak.interactors.periodical_movement.update:
+    class: Kontuak\Interactors\PeriodicalMovement\Update\UseCase
+    arguments: [ @kontuak.source.periodical_movement ]

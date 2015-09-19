@@ -3,13 +3,17 @@
 namespace KontuakBundle\Integration\Doctrine;
 
 use Kontuak\Period;
-use Kontuak\PeriodicalMovement as BasePeriodicalMovement;
 use Kontuak\PeriodicalMovement\Id;
 
-class PeriodicalMovement extends BasePeriodicalMovement
+class PeriodicalMovement extends \Kontuak\PeriodicalMovement
 {
     const TYPE_DAY = 1;
     const TYPE_MONTH_DAY = 2;
+
+    private static $typeMapToDomain = [
+        self::TYPE_DAY => Period::TYPE_DAY,
+        self::TYPE_MONTH_DAY => Period::TYPE_MONTH_DAY,
+    ];
 
     /** @var string */
     protected $doctrineId;
@@ -45,15 +49,10 @@ class PeriodicalMovement extends BasePeriodicalMovement
     public function mapToDomain()
     {
         $period = null;
-        $this->id = new BasePeriodicalMovement\Id($this->doctrineId);
-        switch ($this->periodType) {
-            case self::TYPE_DAY:
-                $period = new Period\DaysPeriod($this->periodAmount);
-                break;
-            case self::TYPE_MONTH_DAY:
-                $period = new Period\MonthDayPeriod($this->periodAmount);
-                break;
-        }
-        $this->period = $period;
+        $this->id = new Id($this->doctrineId);
+        $this->period = Period::factory(
+            self::$typeMapToDomain[$this->periodType],
+            $this->periodAmount
+        );
     }
 }
