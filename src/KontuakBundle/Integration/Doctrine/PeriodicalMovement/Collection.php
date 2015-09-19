@@ -2,41 +2,21 @@
 
 namespace KontuakBundle\Integration\Doctrine\PeriodicalMovement;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\QueryBuilder;
 use Kontuak\PeriodicalMovement;
 use Kontuak\PeriodicalMovement\Collection as BaseCollection;
+use KontuakBundle\Integration\Doctrine\IterableCollection;
 
 class Collection implements BaseCollection
 {
+    use IterableCollection;
 
-    /** @var \Doctrine\Common\Persistence\ObjectRepository */
-    private $repository;
-    /** @var Source */
-    private $source;
     /** @var QueryBuilder */
     private $queryBuilder;
 
-    public function __construct(Source $source)
+    public function __construct(QueryBuilder $queryBuilder)
     {
-        $this->source = $source;
-        $this->repository = $this->source->em()->getRepository('KontuakBundle:Integration\Doctrine\PeriodicalMovement');
-        $this->queryBuilder = $this->repository->createQueryBuilder('pm');
-    }
-
-    /**
-     * @param PeriodicalMovement\Id $id
-     * @return PeriodicalMovement
-     */
-    public function find(PeriodicalMovement\Id $id)
-    {
-        return $this->repository->find($id->serialize());
-    }
-
-    /**
-     * @return PeriodicalMovement[]
-     */
-    public function all()
-    {
-        return $this->queryBuilder->getQuery()->execute();
+        $this->queryBuilder = $queryBuilder;
     }
 }

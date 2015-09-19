@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:aitorguerrero/kontuak.git",
-                "reference": "030413df396d58eda6d09ebbf6646f09703f5b3e"
+                "reference": "d95f3629949f932ef16b131b3b92b08199a65266"
             },
             "require": {
                 "phpunit/phpunit": "4.8.*"
@@ -29,7 +29,7 @@
                     "email": "aguerrerolasarte@gmail.com"
                 }
             ],
-            "time": "2015-09-18 14:45:11"
+            "time": "2015-09-19 13:07:52"
         },
         {
             "name": "doctrine/annotations",
@@ -1981,16 +1981,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.7",
+            "version": "4.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "dab2ada9e9a503d2ec3c32fe0fb59dea9bdd9dfa"
+                "reference": "521720279261e5b14799cf1bb895d4b55e516f26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dab2ada9e9a503d2ec3c32fe0fb59dea9bdd9dfa",
-                "reference": "dab2ada9e9a503d2ec3c32fe0fb59dea9bdd9dfa",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/521720279261e5b14799cf1bb895d4b55e516f26",
+                "reference": "521720279261e5b14799cf1bb895d4b55e516f26",
                 "shasum": ""
             },
             "require": {
@@ -2049,7 +2049,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-09-14 06:57:22"
+            "time": "2015-09-19 05:44:37"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

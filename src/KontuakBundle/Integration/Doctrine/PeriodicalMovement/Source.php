@@ -4,6 +4,7 @@ namespace KontuakBundle\Integration\Doctrine\PeriodicalMovement;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Kontuak\PeriodicalMovement;
+use Kontuak\PeriodicalMovement\Id;
 use Kontuak\PeriodicalMovement\Source as BaseSource;
 
 class Source implements BaseSource
@@ -11,11 +12,13 @@ class Source implements BaseSource
 
     /** @var ObjectManager */
     private $em;
+    /** @var \Doctrine\Common\Persistence\ObjectRepository */
+    private $repository;
 
     public function __construct(ObjectManager $entityManager)
     {
-
         $this->em = $entityManager;
+        $this->repository = $this->em->getRepository('KontuakBundle:Integration\Doctrine\PeriodicalMovement');
     }
 
     /**
@@ -23,7 +26,7 @@ class Source implements BaseSource
      */
     public function collection()
     {
-        return new Collection($this);
+        return new Collection($this->repository->createQueryBuilder('pm'));
     }
 
     public function add(PeriodicalMovement $movement)
@@ -31,13 +34,12 @@ class Source implements BaseSource
         $this->em->persist($movement);
     }
 
-    public function toArray()
+    /**
+     * @param Id $id
+     * @return PeriodicalMovement
+     */
+    public function get(Id $id)
     {
-        // TODO: Implement toArray() method.
-    }
-
-    public function em()
-    {
-        return $this->em;
+        return $this->repository->find($id->serialize());
     }
 }
