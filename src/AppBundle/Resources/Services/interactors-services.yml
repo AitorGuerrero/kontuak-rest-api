@@ -18,3 +18,6 @@ services:
   kontuak.interactors.movement.get_all.use_case:
     class: Kontuak\Interactors\Movement\GetAll\UseCase
     arguments: [ @kontuak.integration_doctrine_movement.source ]
+  kontuak.interactors.movement.update:
+    class: Kontuak\Interactors\Movement\Update\UseCase
+    arguments: [ @kontuak.integration_doctrine_movement.source ]

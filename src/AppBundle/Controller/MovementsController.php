@@ -3,20 +3,17 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Exception\ControllerNotImplemented;
+use AppBundle\Controller\Exception\IncorrectResourceId;
 use AppBundle\Resources\Form;
-use Kontuak\Movement\TotalAmountCalculator;
-use Kontuak\PeriodicalMovement\Id\Generator;
-use Kontuak\PeriodicalMovement\MovementsGenerator;
 use KontuakBundle\Integration\Doctrine\Movement;
 use Kontuak\Interactors;
-use KontuakBundle\Integration\Doctrine\PeriodicalMovement\Source;
 use Symfony\Component\HttpFoundation;
 use FOS\RestBundle\Controller\FOSRestController;
-
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use FOS\RestBundle\View\View;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+/* ANNOTATIONS */
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * Class MovementsController
@@ -60,6 +57,7 @@ class MovementsController extends FOSRestController
     /**
      * @ApiDoc(
      *  output="\AppBundle\Resources\Form\Type\Movement\UpdateMovement",
+     *  output="\AppBundle\Resources\Form\Type\Movement",
      *  tags={"not implemented"}
      * )
      */
@@ -83,7 +81,49 @@ class MovementsController extends FOSRestController
 
     /**
      * @ApiDoc(
-     *  output="\AppBundle\Resources\Form\Type\Movement\NewMovement",
+     *  input = "AppBundle\Resources\Form\Type\Movement",
+     *  output="\AppBundle\Resources\Form\Type\Movement"
+     * )
+     * @param $id
+     * @param HttpFoundation\Request $httpRequest
+     * @throws IncorrectResourceId
+     * @throws Interactors\Exception\EntityNotFound
+     * @throws Interactors\MovementDoesNotExistException
+     * @return HttpFoundation\Response
+     */
+    public function putMovementAction($id, HttpFoundation\Request $httpRequest)
+    {
+        $movementResource = new Form\Resource\Movement();
+        $form = $this->createForm(new Form\Type\Movement(), $movementResource, ['method'=>'PUT']);
+        $form->handleRequest($httpRequest);
+
+        if (!$form->isValid()) {
+            $view = $this->view($form);
+            return $this->handleView($view);
+        }
+        if($id !== $movementResource->id) {
+            throw new IncorrectResourceId();
+        }
+        $useCase = $this->get('kontuak.interactors.movement.update');
+        $request = new Interactors\Movement\Update\Request();
+        $request->id = $movementResource->id;
+        $request->amount = $movementResource->amount;
+        $request->concept = $movementResource->concept;
+        $request->date = $movementResource->date;
+        $useCase->execute($request);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        $useCase = $this->get('kontuak.interactors.movement.get_one');
+        $request = new Interactors\Movement\GetOne\Request();
+        $request->id = $id;
+        $movement = $useCase->execute($request);
+
+        return $this->handleView($this->view($movement));
+    }
+
+    /**
+     * @ApiDoc(
+     *  output="\AppBundle\Resources\Form\Type\Movement",
      *  tags={"not implemented"}
      * )
      */
@@ -96,14 +136,14 @@ class MovementsController extends FOSRestController
      * @param HttpFoundation\Request $httpRequest
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
-     *  input="\AppBundle\Resources\Form\Type\Movement\NewMovement",
-     *  output="\AppBundle\Resources\Form\Resource\Movement"
+     *  input="\AppBundle\Resources\Form\Type\Movement",
+     *  output="\AppBundle\Resources\Form\Type\Movement"
      * )
      */
     public function postMovementAction(HttpFoundation\Request $httpRequest)
     {
         $movementResource = new Form\Resource\Movement();
-        $form = $this->createForm(new Form\Type\Movement\NewMovement(), $movementResource);
+        $form = $this->createForm(new Form\Type\Movement(), $movementResource);
         $form->handleRequest($httpRequest);
 
         if (!$form->isValid()) {
@@ -116,8 +156,13 @@ class MovementsController extends FOSRestController
         $request->amount = $movementResource->amount;
         $request->concept = $movementResource->concept;
         $request->date = $movementResource->date;
-        $movement = $useCase->execute($request);
+        $useCase->execute($request);
         $this->getDoctrine()->getEntityManager()->flush();
+
+        $useCase = $this->get('kontuak.interactors.movement.get_one');
+        $request = new Interactors\Movement\GetOne\Request();
+        $request->id = $movementResource->id;
+        $movement = $useCase->execute($request);
 
         return $this->handleView($this->view([$form->getName() => $movement]));
     }

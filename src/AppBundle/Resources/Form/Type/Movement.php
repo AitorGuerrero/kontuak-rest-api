@@ -18,7 +18,7 @@ class Movement extends AbstractType
             ->add('id', 'text')
             ->add('amount', 'number')
             ->add('concept', 'text')
-            ->add('date', 'date')
+            ->add('date', 'text')
         ;
     }
 
