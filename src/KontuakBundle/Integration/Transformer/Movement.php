@@ -27,5 +27,7 @@ class Movement implements Transformer
                 ->toResource($movement->periodicalMovement())
             ;
         }
+
+        return $resource;
     }
 }

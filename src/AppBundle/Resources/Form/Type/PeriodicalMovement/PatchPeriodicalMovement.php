@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Resources\Form\Type;
+namespace AppBundle\Resources\Form\Type\PeriodicalMovement;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class Movement extends AbstractType
+class PatchPeriodicalMovement extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -14,12 +14,12 @@ class Movement extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $periodType = new Period();
         $builder
-            ->add('id', 'text')
-            ->add('amount', 'number')
-            ->add('concept', 'text')
-            ->add('date', 'date')
-        ;
+            ->add('amount', 'number', ['required' => false])
+            ->add('concept', 'text', ['required' => false])
+            ->add('starts', 'date', ['required' => false])
+            ->add($periodType->getName(), $periodType, ['required' => false]);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -29,11 +29,11 @@ class Movement extends AbstractType
         ));
     }
 
-        /**
+    /**
      * @return string
      */
     public function getName()
     {
-        return 'movement';
+        return 'update_periodical_movement';
     }
 }

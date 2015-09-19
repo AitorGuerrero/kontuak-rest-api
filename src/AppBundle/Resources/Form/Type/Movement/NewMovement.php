@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Resources\Form\Type;
+namespace AppBundle\Resources\Form\Type\Movement;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class Movement extends AbstractType
+class NewMovement extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -18,7 +18,7 @@ class Movement extends AbstractType
             ->add('id', 'text')
             ->add('amount', 'number')
             ->add('concept', 'text')
-            ->add('date', 'date')
+            ->add('date', 'text')
         ;
     }
 
@@ -29,11 +29,11 @@ class Movement extends AbstractType
         ));
     }
 
-        /**
+    /**
      * @return string
      */
     public function getName()
     {
-        return 'movement';
+        return 'new_movement';
     }
 }

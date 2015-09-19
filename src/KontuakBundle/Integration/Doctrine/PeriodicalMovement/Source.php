@@ -28,14 +28,7 @@ class Source implements BaseSource
 
     public function add(PeriodicalMovement $movement)
     {
-        $periodicalMovement = new \KontuakBundle\Integration\Doctrine\PeriodicalMovement(
-            $movement->id(),
-            $movement->amount(),
-            $movement->concept(),
-            $movement->starts(),
-            $movement->period()
-        );
-        $this->em->persist($periodicalMovement);
+        $this->em->persist($movement);
     }
 
     public function toArray()

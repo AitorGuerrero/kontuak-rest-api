@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Exception\ControllerNotImplemented;
 use AppBundle\Resources\Form;
 use Kontuak\Movement\TotalAmountCalculator;
 use Kontuak\PeriodicalMovement\Id\Generator;
@@ -25,59 +26,112 @@ class MovementsController extends FOSRestController
 {
 
     /**
-     * @param HttpFoundation\Request $httpRequest
-     * @throws Interactors\InvalidArgumentException
-     * @return HttpFoundation\JsonResponse
      * @ApiDoc(
-     *  requirements={
+     *  resource=true,
+     *  output="\AppBundle\Resources\Form\Type\Movement",
+     *  parameters={
      *      {
      *          "name"="limit",
      *          "dataType"="integer",
-     *          "description"="How many objects to receive"
+     *          "required"=true
+     *      },
+     *      {
+     *          "name"="page",
+     *          "dataType"="integer",
+     *          "required"=true
      *      }
      *  }
      * )
+     * @param HttpFoundation\Request $httpRequest
+     * @throws Interactors\Exception\InvalidArgument
+     * @return array
      */
-    public function getMovementsHistoryAction(HttpFoundation\Request $httpRequest)
+    public function getMovementsAction(HttpFoundation\Request $httpRequest)
     {
-        $useCase = $this->get('kontuak.interactors.movement.history.use_case');
-        $request = new Interactors\Movement\History\Request();
+        $useCase = $this->get('kontuak.interactors.movement.get_all.use_case');
+        $request = $useCase->newRequest();
         $request->limit = (int) $httpRequest->get('limit');
-        $useCaseResponse = $useCase->execute($request);
+        $request->page = (int) $httpRequest->get('page');
+        $response = $useCase->execute($request);
 
-        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
-
-        return $response;
+        return new HttpFoundation\JsonResponse(['movements' => $response->movements]);
     }
 
     /**
-     * @return HttpFoundation\JsonResponse
      * @ApiDoc(
+     *  output="\AppBundle\Resources\Form\Type\Movement\UpdateMovement",
+     *  tags={"not implemented"}
      * )
      */
-    public function getMovementsComingAction()
+    public function getMovementsFormPatchAction()
     {
-        $useCase = $this->get('kontuak.interactors.movement.coming.use_case');
-        $request = new Interactors\Movement\Coming\Request();
-        $request->limit = 3;
-        $useCaseResponse = $useCase->execute($request);
+        throw new ControllerNotImplemented();
+    }
 
-        $response = new HttpFoundation\JsonResponse($useCaseResponse->movements, 200);
+    /**
+     * @ApiDoc(
+     *  input = "AppBundle\Resources\Form\Type\Movement\UpdateMovement",
+     *  tags={"not implemented"}
+     * )
+     * @param $id
+     * @throws ControllerNotImplemented
+     */
+    public function patchMovementAction($id)
+    {
+        throw new ControllerNotImplemented();
+    }
 
-        return $response;
+    /**
+     * @ApiDoc(
+     *  output="\AppBundle\Resources\Form\Type\Movement\NewMovement",
+     *  tags={"not implemented"}
+     * )
+     */
+    public function getMovementsFormPostAction()
+    {
+        throw new ControllerNotImplemented();
+    }
+
+    /**
+     * @param HttpFoundation\Request $httpRequest
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  input="\AppBundle\Resources\Form\Type\Movement\NewMovement",
+     *  output="\AppBundle\Resources\Form\Resource\Movement"
+     * )
+     */
+    public function postMovementAction(HttpFoundation\Request $httpRequest)
+    {
+        $movementResource = new Form\Resource\Movement();
+        $form = $this->createForm(new Form\Type\Movement\NewMovement(), $movementResource);
+        $form->handleRequest($httpRequest);
+
+        if (!$form->isValid()) {
+            $view = $this->view($form);
+            return $this->handleView($view);
+        }
+        $useCase = $this->get('kontuak.interactors.movement.create');
+        $request = new Interactors\Movement\Create\Request();
+        $request->id = $movementResource->id;
+        $request->amount = $movementResource->amount;
+        $request->concept = $movementResource->concept;
+        $request->date = $movementResource->date;
+        $movement = $useCase->execute($request);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        return $this->handleView($this->view([$form->getName() => $movement]));
     }
 
     /**
      * @param $id
      * @return HttpFoundation\Response
      * @ApiDoc(
-     *  resource=true,
-     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
+     *  output="\AppBundle\Resources\Form\Type\Movement"
      * )
      */
     public function getMovementAction($id)
     {
-        $useCase = $this->get('kontuak.interactors.movement.get_one.use_case');
+        $useCase = $this->get('kontuak.interactors.movement.get_one');
         $request = new Interactors\Movement\GetOne\Request();
         $request->id = $id;
         $response = $useCase->execute($request);
@@ -88,46 +142,7 @@ class MovementsController extends FOSRestController
         $movementResource->concept = $response->movement['concept'];
         $movementResource->date = $response->movement['date'];
 
-        $view = $this->view($movementResource);
-
-        return $this->handleView($view);
-    }
-
-    /**
-     * @param HttpFoundation\Request $httpRequest
-     * @return HttpFoundation\JsonResponse
-     * @ApiDoc(
-     *  resource=true,
-     *  input="\AppBundle\Resources\Form\Type\NewMovement",
-     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
-     * )
-     */
-    public function postMovementAction($id, HttpFoundation\Request $httpRequest)
-    {
-        $movementResource = new Form\Resource\Movement();
-        $form = $this->createForm(new Form\Type\Movement(), $movementResource);
-        $form->handleRequest($httpRequest);
-
-        if ($form->isValid()) {
-            $useCase = $this->get('kontuak.interactors.movement.create.use_case');
-            $request = $this->get('kontuak.interactors.movement.create.request');
-            $request->id =  $id;
-            $request->amount = $movementResource->amount;
-            $request->concept = $movementResource->concept;
-            $request->date = $movementResource->date;
-            $period = $httpRequest->get('period');
-            if($period) {
-                $request->isPeriodical = true;
-                $request->periodType = $period['type'];
-                $request->periodAmount = $period['amount'];
-            }
-            $movement = $useCase->execute($request);
-            $this->getDoctrine()->getEntityManager()->flush();
-
-            return new HttpFoundation\JsonResponse($movement);
-        }
-        $view = $this->view($form);
-        return $this->handleView($view);
+        return $this->handleView($this->view(['movement' => $movementResource]));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -138,68 +153,55 @@ class MovementsController extends FOSRestController
     }
 
     /**
-     * @param HttpFoundation\Request $httpRequest
-     * @return HttpFoundation\JsonResponse
-     * @ApiDoc(
-     *  resource=true,
-     *  input="\AppBundle\Resources\Form\Type\Movement",
-     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
-     * )
-     */
-    public function putMovementsAction(HttpFoundation\Request $httpRequest, $id)
-    {
-        $movementResource = new Form\Resource\Movement();
-        $form = $this->createForm(new Form\Type\Movement(), $movementResource, ['method' => 'PUT']);
-        $form->handleRequest($httpRequest);
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
-            $useCase = new Interactors\Movement\Update\UseCase(
-                new Movement\Source($em),
-                new \DateTime()
-            );
-            $request = new Interactors\Movement\Update\Request();
-            $request->id =  $id;
-            $request->amount = $movementResource->amount;
-            $request->concept = $movementResource->concept;
-            $request->date = $movementResource->date;
-            $useCase->execute($request);
-            $em->flush();
-            return new HttpFoundation\JsonResponse([
-                'movement' => $movementResource
-            ]);
-        }
-        $view = $this->view($form);
-        return $this->handleView($view);
-    }
-
-    /**
      * @param $id
+     * @throws Interactors\Movement\Remove\MovementDoesNotExistsException
      * @return HttpFoundation\Response
-     * @ApiDoc(
-     *  output="\AppBundle\Resources\Form\Type\CompleteMovement"
-     * )
+     * @ApiDoc()
      */
     public function deleteMovementAction($id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
-        $useCase = $this->get('kontuak.interactors.movement.remove.use_case');
+        $useCase = $this->get('kontuak.interactors.movement.remove');
         $request = new Interactors\Movement\Remove\Request();
         $request->id = $id;
         $useCase->execute($request);
-        $em->flush();
+        $this->getDoctrine()->getEntityManager()->flush();
 
-        $httpResponse = new HttpFoundation\Response();
-
-        return $httpResponse;
+        return new HttpFoundation\Response();
     }
 
     /**
-     * @ApiDoc()
-     * @param null $id
-     * @return HttpFoundation\Response
+     * @param HttpFoundation\Request $httpRequest
+     * @throws Interactors\InvalidArgumentException
+     * @return HttpFoundation\JsonResponse
+     * @ApiDoc(
+     *  parameters= {
+     *      {
+     *          "name"="date-from",
+     *          "dataType"="date",
+     *          "required"=false
+     *      },
+     *      {
+     *          "name"="date-to",
+     *          "dataType"="date",
+     *          "required"=false
+     *      },
+     *      {
+     *          "name"="limit",
+     *          "dataType"="integer",
+     *          "required"=false,
+     *          "description"="How many objects to receive"
+     *      }
+     *  },
+     *  output="\AppBundle\Resources\Form\Type\Movement"
+     * )
      */
-    public function optionsMovementAction($id)
+    public function getMovementsHistoryAction(HttpFoundation\Request $httpRequest)
     {
-        return new HttpFoundation\Response('', 200);
+        $useCase = $this->get('kontuak.interactors.movement.history');
+        $request = new Interactors\Movement\History\Request();
+        $request->limit = (int) $httpRequest->get('limit');
+        $useCaseResponse = $useCase->execute($request);
+
+        return $this->handleView($this->view($useCaseResponse->amounts));
     }
 }

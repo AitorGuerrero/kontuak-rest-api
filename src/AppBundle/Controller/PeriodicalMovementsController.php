@@ -17,14 +17,114 @@ class PeriodicalMovementsController extends FOSRestController
 {
 
     /**
-     * @ApiDoc
+     * Returns a list of periodical movements
+     * @ApiDoc(
+     *  resource=true,
+     *  parameters={
+     *      {
+     *          "name"="limit",
+     *          "dataType"="integer",
+     *          "required"=true
+     *      },
+     *      {
+     *          "name"="page",
+     *          "dataType"="integer",
+     *          "required"=true
+     *      }
+     *  },
+     *  tags={"not implemented"}
+     * )
      */
-    public function putPeriodical_movementsGenerate_movementsAction()
+    public function getPeriodical_movementsAction()
     {
-        $useCase = $this->get('kontuak.interactors.periodical_movement.apply.use_case');
-        $useCase->execute();
-        $this->getDoctrine()->getManager()->flush();
 
-        return new HttpFoundation\Response();
+    }
+
+    /**
+     * @ApiDoc(tags={"not implemented"})
+     * @param $id
+     */
+    public function getPeriodical_movementAction($id)
+    {
+
+    }
+
+    /**
+     * Saves a new periodical movement
+     * @ApiDoc(
+     *  tags={"not implemented"},
+     *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\NewPeriodicalMovement",
+     *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement"
+     * )
+     */
+    public function postPeriodical_movementAction()
+    {
+
+    }
+
+    /**
+     * Form required to post a new periodical movement
+     * @ApiDoc(
+     *  tags={"not implemented"},
+     *  output="AppBundle\Resources\Form\Type\PeriodicalMovement\NewPeriodicalMovement"
+     * )
+     */
+    public function getPeriodical_movementsFormPostAction()
+    {
+
+    }
+
+    /**
+     * @ApiDoc(
+     *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
+     *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement",
+     *  tags={"not implemented"}
+     * )
+     * @param $id
+     */
+    public function putPeriodical_movementAction($id)
+    {
+
+    }
+
+    /**
+     * @ApiDoc(tags={"not implemented"})
+     * @param $id
+     */
+    public function deletePeriodical_movementAction($id)
+    {
+
+    }
+
+    /**
+     * @ApiDoc(
+     *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
+     *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement",
+     *  tags={"not implemented"}
+     * )
+     * @param $id
+     */
+    public function patchPeriodical_movementsAction($id)
+    {
+    }
+
+    /**
+     * Form to patch a periodical movement
+     * @ApiDoc(
+     *  output="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
+     *  tags={"not implemented"}
+     * )
+     */
+    public function getPeriodical_movementsFormPatchAction()
+    {
+    }
+
+    /**
+     * @ApiDoc(tags={"not implemented"})
+     * @param $id
+     */
+    public function getPeriodical_movementMovementsAction($id)
+    {
+
     }
 }

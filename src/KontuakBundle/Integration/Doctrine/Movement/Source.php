@@ -28,17 +28,7 @@ class Source implements Movement\Source
      */
     public function add(Movement $movement)
     {
-        $doctrineMovement = new \KontuakBundle\Integration\Doctrine\Movement(
-            $movement->id(),
-            $movement->amount(),
-            $movement->concept(),
-            $movement->date(),
-            $movement->created()
-        );
-        if($movement->periodicalMovement()) {
-            $doctrineMovement->assignToPeriodicalMovement($movement->periodicalMovement());
-        }
-        $this->em->persist($doctrineMovement);
+        $this->em->persist($movement);
     }
 
     public function em() {

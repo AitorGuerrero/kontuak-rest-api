@@ -33,7 +33,7 @@ class PeriodicalMovement
     public $starts;
 
     /**
-     * @Assert\Type(type="AppBundle\Resources\Form\Resource\PeriodicalMovement\Period")
+     * @Assert\Type(type="\AppBundle\Resources\Form\Resource\PeriodicalMovement\Period")
      * @Assert\Valid()
      * @var \AppBundle\Resources\Form\Resource\PeriodicalMovement\Period
      */

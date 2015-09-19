@@ -1,13 +1,14 @@
 <?php
 
-namespace AppBundle\Resources\Form\Type;
+namespace AppBundle\Resources\Form\Type\Movement;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class Movement extends AbstractType
+class PatchMovement extends AbstractType
 {
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -15,10 +16,9 @@ class Movement extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'text')
-            ->add('amount', 'number')
-            ->add('concept', 'text')
-            ->add('date', 'date')
+            ->add('amount', 'number', ['required' => false])
+            ->add('concept', 'text', ['required' => false])
+            ->add('date', 'date', ['required' => false])
         ;
     }
 
@@ -29,11 +29,13 @@ class Movement extends AbstractType
         ));
     }
 
-        /**
-     * @return string
+    /**
+     * Returns the name of this type.
+     *
+     * @return string The name of this type
      */
     public function getName()
     {
-        return 'movement';
+        return 'movement_update';
     }
 }
