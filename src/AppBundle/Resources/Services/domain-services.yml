@@ -1,14 +1,10 @@
 services:
-  kontuak.periodical_movement.id.generator:
-    class: Kontuak\PeriodicalMovement\Id\Generator
-  kontuak.movement.id.generator:
-    class: Kontuak\Movement\Id\Generator
   kontuak.movement.total_amount_calculator:
     class: Kontuak\Movement\TotalAmountCalculator
     arguments: [ @kontuak.source.movement ]
-  kontuak.periodical_movement.movements_generator:
-    class: Kontuak\PeriodicalMovement\MovementsGenerator
-    arguments: [ @kontuak.source.movement, @kontuak.movement.id.generator, @kontuak.factory.movement, @timestamp ]
   kontuak.movement.history:
     class: Kontuak\Movement\History
     arguments: [ @kontuak.integration_doctrine_movement.source, @kontuak.movement.total_amount_calculator ]
+  kontuak.periodical_movement.movements_generator:
+    class: Kontuak\PeriodicalMovement\MovementsGenerator
+    arguments: [ @kontuak.integration_doctrine_movement.source, @kontuak.factory.movement, @timestamp ]

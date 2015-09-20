@@ -164,7 +164,7 @@ class MovementsController extends FOSRestController
         $request->id = $movementResource->id;
         $movement = $useCase->execute($request);
 
-        return $this->handleView($this->view([$form->getName() => $movement]));
+        return $this->handleView($this->view($movement));
     }
 
     /**
@@ -182,12 +182,12 @@ class MovementsController extends FOSRestController
         $response = $useCase->execute($request);
 
         $movementResource = new Form\Resource\Movement();
-        $movementResource->id = $response->movement['id'];
-        $movementResource->amount = $response->movement['amount'];
-        $movementResource->concept = $response->movement['concept'];
-        $movementResource->date = $response->movement['date'];
+        $movementResource->id = $response->movement->id;
+        $movementResource->amount = $response->movement->amount;
+        $movementResource->concept = $response->movement->concept;
+        $movementResource->date = $response->movement->date;
 
-        return $this->handleView($this->view(['movement' => $movementResource]));
+        return $this->handleView($this->view($movementResource));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -245,6 +245,8 @@ class MovementsController extends FOSRestController
         $useCase = $this->get('kontuak.interactors.movement.history');
         $request = new Interactors\Movement\History\Request();
         $request->limit = (int) $httpRequest->get('limit');
+        $request->toDate = $httpRequest->get('dateTo');
+        $request->fromDate = $httpRequest->get('dateFrom');
         $useCaseResponse = $useCase->execute($request);
 
         return $this->handleView($this->view($useCaseResponse->amounts));
