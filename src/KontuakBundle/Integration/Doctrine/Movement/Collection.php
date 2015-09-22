@@ -13,9 +13,6 @@ class Collection implements Movement\Collection
 
     use IterableCollection;
 
-    /** @var QueryBuilder */
-    private $queryBuilder;
-
     public function __construct(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;
@@ -119,6 +116,20 @@ class Collection implements Movement\Collection
         $this->queryBuilder
             ->andWhere('m.date > :dateIsPostThan')
             ->setParameter('dateIsPostThan', $timeStamp);
+
+        return $this;
+    }
+
+    /**
+     * @param Id $id
+     * @return Movement\Collection
+     */
+    public function byId(Id $id)
+    {
+        $this->queryBuilder
+            ->andWhere('m.doctrineId = :movementId')
+            ->setParameter('movementId', $id->serialize());
+
         return $this;
     }
 }

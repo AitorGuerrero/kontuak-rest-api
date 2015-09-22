@@ -1,25 +1,19 @@
 services:
 
-  kontuak.interactors.movement.create:
-    class: Kontuak\Interactors\Movement\Create\UseCase
-    arguments: [ @kontuak.integration_doctrine_movement.source, @timestamp, @kontuak.factory.movement ]
   kontuak.interactors.movement.history:
     class: Kontuak\Interactors\Movement\History\UseCase
     arguments: [ @kontuak.source.movement, @kontuak.movement.total_amount_calculator, @kontuak.transformer.movement ]
-  kontuak.interactors.movement.coming:
-    class: Kontuak\Interactors\Movement\Coming\UseCase
-    arguments: [ @kontuak.movement.history, @kontuak.transformer.movement, @timestamp]
   kontuak.interactors.movement.get_one:
     class: Kontuak\Interactors\Movement\GetOne\UseCase
     arguments: [ @kontuak.source.movement, @kontuak.transformer.movement ]
+  kontuak.interactors.movement.put:
+    class: Kontuak\Interactors\Movement\Put\UseCase
+    arguments: [ @kontuak.source.movement, @kontuak.transformer.movement, @kontuak.factory.movement, @timestamp ]
   kontuak.interactors.movement.remove:
     class: Kontuak\Interactors\Movement\Remove\UseCase
     arguments: [ @kontuak.source.movement ]
   kontuak.interactors.movement.get_all:
     class: Kontuak\Interactors\Movement\GetAll\UseCase
-    arguments: [ @kontuak.integration_doctrine_movement.source ]
-  kontuak.interactors.movement.update:
-    class: Kontuak\Interactors\Movement\Update\UseCase
     arguments: [ @kontuak.integration_doctrine_movement.source ]
 
   kontuak.interactors.periodical_movement.create:

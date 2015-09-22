@@ -21,12 +21,6 @@ class Movement implements Transformer
         $resource->id = $movement->id()->serialize();
         $resource->concept = $movement->concept();
         $resource->date = $movement->date()->format('Y-m-d');
-        if($movement->periodicalMovement()) {
-            $resource->periodicalMovement = $this
-                ->periodicalMovementTransformer
-                ->toResource($movement->periodicalMovement())
-            ;
-        }
 
         return $resource;
     }

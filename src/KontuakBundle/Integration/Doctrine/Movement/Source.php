@@ -96,7 +96,7 @@ class Source implements Movement\Source
     public function get(Id $id)
     {
         $movement = $this->repository->find($id->serialize());
-        if (false === $movement) {
+        if (null === $movement) {
             throw new EntityNotFound();
         }
         return $movement;
