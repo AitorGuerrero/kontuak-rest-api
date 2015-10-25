@@ -22,11 +22,11 @@ class Movement extends \Kontuak\Movement
 
     public function mapToDoctrine()
     {
-        $this->doctrineId = $this->id()->serialize();
+        $this->doctrineId = $this->id()->toString();
     }
 
     public function mapToDomain()
     {
-        $this->id = new Id($this->doctrineId);
+        $this->id = Id::parse($this->doctrineId);
     }
 }

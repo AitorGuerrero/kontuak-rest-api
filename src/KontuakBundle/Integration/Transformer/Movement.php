@@ -18,7 +18,7 @@ class Movement implements Transformer
     {
         $resource = new \AppBundle\Resources\Form\Resource\Movement();
         $resource->amount = $movement->amount();
-        $resource->id = $movement->id()->serialize();
+        $resource->id = $movement->id()->toString();
         $resource->concept = $movement->concept();
         $resource->date = $movement->date()->format('Y-m-d');
 
