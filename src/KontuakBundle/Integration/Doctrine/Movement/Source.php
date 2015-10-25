@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Kontuak\Exception\Source\EntityNotFound;
 use Kontuak\Movement;
 use Kontuak\Movement\Id;
+use KontuakBundle\Integration\Doctrine\Movement as DoctrineMovement;
 
 class Source implements Movement\Source
 {
@@ -36,7 +37,7 @@ class Source implements Movement\Source
      */
     public function add(Movement $movement)
     {
-        $this->em->persist($movement);
+        $this->em->persist(DoctrineMovement::fromMovement($movement));
     }
 
     public function em() {

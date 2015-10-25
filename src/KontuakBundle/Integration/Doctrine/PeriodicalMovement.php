@@ -24,20 +24,21 @@ class PeriodicalMovement extends \Kontuak\PeriodicalMovement
     /** @var int */
     protected $periodAmount;
 
-    public function __construct(
-        Id $id,
-        $amount,
-        $concept,
-        \DateTime $starts,
-        Period $period
-    ) {
-        parent::__construct($id, $amount, $concept, $starts, $period);
-    }
-
     private static $periodTypeMapping = [
         self::TYPE_DAY => Period::TYPE_DAY,
         self::TYPE_MONTH_DAY => Period::TYPE_MONTH_DAY
     ];
+
+    public static function fromPeriodicalMovement(\Kontuak\PeriodicalMovement $periodicalMovement)
+    {
+        return new self(
+            $periodicalMovement->id(),
+            $periodicalMovement->amount(),
+            $periodicalMovement->concept(),
+            $periodicalMovement->starts(),
+            $periodicalMovement->period()
+        );
+    }
 
     public function mapToDoctrine()
     {

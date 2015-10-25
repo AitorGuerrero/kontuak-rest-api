@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use Kontuak\Interactors\PeriodicalMovement\Create;
-use Kontuak\Interactors\PeriodicalMovement\Apply;
+use Kontuak\Ports\PeriodicalMovement\Create;
+use Kontuak\Ports\PeriodicalMovement\Apply;
 use Symfony\Component\HttpFoundation;
 use AppBundle\Resources\Form;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -73,7 +73,7 @@ class PeriodicalMovementsController extends FOSRestController
      *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement"
      * )
      * @param HttpFoundation\Request $httpRequest
-     * @throws \Kontuak\Interactors\Exception\EntityNotFound
+     * @throws \Kontuak\Ports\Exception\EntityNotFound
      * @return HttpFoundation\Response
      */
     public function postPeriodical_movementAction(HttpFoundation\Request $httpRequest)
@@ -124,7 +124,7 @@ class PeriodicalMovementsController extends FOSRestController
      * )
      * @param $id
      * @param HttpFoundation\Request $httpRequest
-     * @throws \Kontuak\Interactors\Exception\EntityNotFound
+     * @throws \Kontuak\Ports\Exception\EntityNotFound
      * @return HttpFoundation\Response
      */
     public function putPeriodical_movementAction($id, HttpFoundation\Request $httpRequest)

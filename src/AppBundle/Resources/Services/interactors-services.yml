@@ -1,30 +1,30 @@
 services:
 
   kontuak.interactors.movement.history:
-    class: Kontuak\Interactors\Movement\History\UseCase
+    class: Kontuak\Ports\Movement\History\UseCase
     arguments: [ @kontuak.source.movement, @kontuak.movement.total_amount_calculator, @kontuak.transformer.movement ]
   kontuak.interactors.movement.get_one:
-    class: Kontuak\Interactors\Movement\GetOne\UseCase
+    class: Kontuak\Ports\Movement\GetOne\UseCase
     arguments: [ @kontuak.source.movement, @kontuak.transformer.movement ]
   kontuak.interactors.movement.put:
-    class: Kontuak\Interactors\Movement\Put\UseCase
+    class: Kontuak\Ports\Movement\Put\UseCase
     arguments: [ @kontuak.source.movement, @kontuak.transformer.movement, @kontuak.factory.movement, @timestamp ]
   kontuak.interactors.movement.remove:
-    class: Kontuak\Interactors\Movement\Remove\UseCase
+    class: Kontuak\Ports\Movement\Remove\UseCase
     arguments: [ @kontuak.source.movement ]
   kontuak.interactors.movement.get_all:
-    class: Kontuak\Interactors\Movement\GetAll\UseCase
+    class: Kontuak\Ports\Movement\GetAll\UseCase
     arguments: [ @kontuak.integration_doctrine_movement.source ]
 
   kontuak.interactors.periodical_movement.create:
-    class: Kontuak\Interactors\PeriodicalMovement\Create\UseCase
+    class: Kontuak\Ports\PeriodicalMovement\Create\UseCase
     arguments: [ @kontuak.factory.periodical_movement, @kontuak.source.periodical_movement ]
   kontuak.interactors.periodical_movement.get_one:
-    class: Kontuak\Interactors\PeriodicalMovement\GetOne\UseCase
+    class: Kontuak\Ports\PeriodicalMovement\GetOne\UseCase
     arguments: [ @kontuak.source.periodical_movement, @kontuak.transformer.periodical_movement ]
   kontuak.interactors.periodical_movement.get_all:
-    class: Kontuak\Interactors\PeriodicalMovement\GetAll\UseCase
+    class: Kontuak\Ports\PeriodicalMovement\GetAll\UseCase
     arguments: [ @kontuak.source.periodical_movement, @kontuak.transformer.periodical_movement ]
   kontuak.interactors.periodical_movement.update:
-    class: Kontuak\Interactors\PeriodicalMovement\Update\UseCase
+    class: Kontuak\Ports\PeriodicalMovement\Update\UseCase
     arguments: [ @kontuak.source.periodical_movement ]

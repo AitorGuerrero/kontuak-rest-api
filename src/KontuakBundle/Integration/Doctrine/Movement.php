@@ -9,14 +9,15 @@ class Movement extends \Kontuak\Movement
     /** @var string */
     protected $doctrineId;
 
-    public function __construct(
-        Id $movementId,
-        $amount,
-        $concept,
-        \DateTime $date,
-        \DateTime $created
-    ) {
-        parent::__construct($movementId, $amount, $concept, $date, $created);
+    public static function fromMovement(\Kontuak\Movement $movement)
+    {
+        return new self(
+            $movement->id(),
+            $movement->amount(),
+            $movement->concept(),
+            $movement->date(),
+            $movement->created()
+        );
     }
 
     public function mapToDoctrine()

@@ -11,5 +11,8 @@ nelmio_cors:
         '^/movements':
             allow_methods: ['GET', 'OPTIONS', 'DELETE', 'PUT']
             allow_headers: ['content-type']
+        '^/periodical_movements':
+            allow_methods: ['GET', 'OPTIONS', 'DELETE', 'PUT']
+            allow_headers: ['content-type']
         '^/movements/history':
             allow_methods: ['GET']

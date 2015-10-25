@@ -2,11 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Controller\Exception\ControllerNotImplemented;
 use AppBundle\Controller\Exception\IncorrectResourceId;
 use AppBundle\Resources\Form;
 use KontuakBundle\Integration\Doctrine\Movement;
-use Kontuak\Interactors;
+use Kontuak\Ports;
 use Symfony\Component\HttpFoundation;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -23,7 +22,7 @@ class MovementsController extends FOSRestController
 {
     /**
      * @param HttpFoundation\Request $httpRequest
-     * @throws Interactors\InvalidArgumentException
+     * @throws Ports\InvalidArgumentException
      * @return HttpFoundation\JsonResponse
      * @ApiDoc(
      *  parameters= {
@@ -50,7 +49,7 @@ class MovementsController extends FOSRestController
     public function getMovementsHistoryAction(HttpFoundation\Request $httpRequest)
     {
         $useCase = $this->get('kontuak.interactors.movement.history');
-        $request = new Interactors\Movement\History\Request();
+        $request = new Ports\Movement\History\Request();
         $request->limit = (int) $httpRequest->get('limit');
         $request->toDate = $httpRequest->get('dateTo');
         $request->fromDate = $httpRequest->get('dateFrom');
@@ -77,7 +76,7 @@ class MovementsController extends FOSRestController
      *  }
      * )
      * @param HttpFoundation\Request $httpRequest
-     * @throws Interactors\Exception\InvalidArgument
+     * @throws Ports\Exception\InvalidArgument
      * @return array
      */
     public function getMovementsAction(HttpFoundation\Request $httpRequest)
@@ -99,8 +98,8 @@ class MovementsController extends FOSRestController
      * @param $id
      * @param HttpFoundation\Request $httpRequest
      * @throws IncorrectResourceId
-     * @throws Interactors\Exception\EntityNotFound
-     * @throws Interactors\MovementDoesNotExistException
+     * @throws Ports\Exception\EntityNotFound
+     * @throws Ports\MovementDoesNotExistException
      * @return HttpFoundation\Response
      */
     public function putMovementAction($id, HttpFoundation\Request $httpRequest)
@@ -117,7 +116,7 @@ class MovementsController extends FOSRestController
             throw new IncorrectResourceId();
         }
         $useCase = $this->get('kontuak.interactors.movement.put');
-        $request = new Interactors\Movement\Put\Request(
+        $request = new Ports\Movement\Put\Request(
             $movementResource->id,
             $movementResource->concept,
             $movementResource->amount,
@@ -142,7 +141,7 @@ class MovementsController extends FOSRestController
     public function getMovementAction($id)
     {
         $useCase = $this->get('kontuak.interactors.movement.get_one');
-        $request = new Interactors\Movement\GetOne\Request();
+        $request = new Ports\Movement\GetOne\Request();
         $request->id = $id;
         $response = $useCase->execute($request);
 
@@ -164,14 +163,14 @@ class MovementsController extends FOSRestController
 
     /**
      * @param $id
-     * @throws Interactors\Movement\Remove\MovementDoesNotExistsException
+     * @throws \Ports\Movement\Remove\MovementDoesNotExistsException
      * @return HttpFoundation\Response
      * @ApiDoc()
      */
     public function deleteMovementAction($id)
     {
         $useCase = $this->get('kontuak.interactors.movement.remove');
-        $request = new Interactors\Movement\Remove\Request();
+        $request = new Ports\Movement\Remove\Request();
         $request->id = $id;
         $useCase->execute($request);
         $this->getDoctrine()->getEntityManager()->flush();
