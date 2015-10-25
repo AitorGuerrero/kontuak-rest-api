@@ -42,7 +42,7 @@ class PeriodicalMovement extends \Kontuak\PeriodicalMovement
 
     public function mapToDoctrine()
     {
-        $this->doctrineId = $this->id()->serialize();
+        $this->doctrineId = $this->id()->toString();
         $this->periodType = array_flip(self::$periodTypeMapping)[$this->period()->type()];
         $this->periodAmount = $this->period()->amount();
     }
@@ -50,7 +50,7 @@ class PeriodicalMovement extends \Kontuak\PeriodicalMovement
     public function mapToDomain()
     {
         $period = null;
-        $this->id = new Id($this->doctrineId);
+        $this->id = Id::parse($this->doctrineId);
         $this->period = Period::factory(
             self::$typeMapToDomain[$this->periodType],
             $this->periodAmount

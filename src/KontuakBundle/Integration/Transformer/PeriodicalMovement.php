@@ -18,7 +18,7 @@ class PeriodicalMovement implements Transformer
     public function toResource(\Kontuak\PeriodicalMovement $entity)
     {
         $resource = new \AppBundle\Resources\Form\Resource\PeriodicalMovement();
-        $resource->id = $entity->id()->serialize();
+        $resource->id = $entity->id()->toString();
         $resource->concept = $entity->concept();
         $resource->amount = $entity->amount();
         $resource->starts = $entity->starts()->format('Y-m-d');

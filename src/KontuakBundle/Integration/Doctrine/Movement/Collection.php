@@ -128,7 +128,7 @@ class Collection implements Movement\Collection
     {
         $this->queryBuilder
             ->andWhere('m.doctrineId = :movementId')
-            ->setParameter('movementId', $id->serialize());
+            ->setParameter('movementId', $id->toString());
 
         return $this;
     }
