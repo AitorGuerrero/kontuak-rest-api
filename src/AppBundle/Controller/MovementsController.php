@@ -53,9 +53,9 @@ class MovementsController extends FOSRestController
         $request->limit = (int) $httpRequest->get('limit');
         $request->toDate = $httpRequest->get('dateTo');
         $request->fromDate = $httpRequest->get('dateFrom');
-        $useCaseResponse = $useCase->execute($request);
+        $amounts = $useCase->execute($request);
 
-        return $this->handleView($this->view($useCaseResponse->amounts));
+        return $this->handleView($this->view($amounts));
     }
 
     /**
@@ -81,13 +81,17 @@ class MovementsController extends FOSRestController
      */
     public function getMovementsAction(HttpFoundation\Request $httpRequest)
     {
-        $useCase = $this->get('kontuak.interactors.movement.get_all.use_case');
+        $useCase = $this->get('kontuak.interactors.movement.get_all');
         $request = $useCase->newRequest();
-        $request->limit = (int) $httpRequest->get('limit');
-        $request->page = (int) $httpRequest->get('page');
-        $response = $useCase->execute($request);
+        $request->limit = (int)$httpRequest->get('limit');
+        $request->page = (int)$httpRequest->get('page');
+        $movements = $useCase->execute($request);
+        $movementResources = [];
+        foreach ($movements as $movement) {
+            $movementResources[] = new Form\Resource\Movement($movement);
+        }
 
-        return new HttpFoundation\JsonResponse(['movements' => $response->movements]);
+        return new HttpFoundation\JsonResponse(['movements' => $movementResources]);
     }
 
     /**
@@ -109,25 +113,26 @@ class MovementsController extends FOSRestController
         $form->handleRequest($httpRequest);
 
         if (!$form->isValid()) {
-            $view = $this->view($form, 400);
-            return $this->handleView($view);
+            return $this->handleView(
+                $this->view(
+                    $form,
+                    HttpFoundation\Response::HTTP_BAD_REQUEST
+                )
+            );
         }
-        if($id !== $movementResource->id) {
-            throw new IncorrectResourceId();
-        }
-        $useCase = $this->get('kontuak.interactors.movement.put');
-        $request = new Ports\Movement\Put\Request(
-            $movementResource->id,
-            $movementResource->concept,
+        $exists = $this->get('kontuak.interactors.movement.exists')->execute($id);
+        $this->get('kontuak.interactors.movement.put')->execute(
+            $id,
             $movementResource->amount,
+            $movementResource->concept,
             $movementResource->date
         );
-        $response = $useCase->execute($request);
         $this->getDoctrine()->getManager()->flush();
+        $movement = $this->get('kontuak.interactors.movement.get_one')->execute($id);
 
         return $this->handleView($this->view(
-            $response->movement(),
-            $response->isNew() ? 201 : 200
+            $movement,
+            $exists ? HttpFoundation\Response::HTTP_OK : HttpFoundation\Response::HTTP_CREATED
         ));
     }
 
@@ -140,16 +145,13 @@ class MovementsController extends FOSRestController
      */
     public function getMovementAction($id)
     {
-        $useCase = $this->get('kontuak.interactors.movement.get_one');
-        $request = new Ports\Movement\GetOne\Request();
-        $request->id = $id;
-        $response = $useCase->execute($request);
+        try {
+            $movement = $this->get('kontuak.interactors.movement.get_one')->execute($id);
+        } catch (Ports\Exception\EntityNotFound $exception) {
+            return new HttpFoundation\Response('Movement not found', HttpFoundation\Response::HTTP_NOT_FOUND);
+        }
 
-        $movementResource = new Form\Resource\Movement();
-        $movementResource->id = $response->movement->id;
-        $movementResource->amount = $response->movement->amount;
-        $movementResource->concept = $response->movement->concept;
-        $movementResource->date = $response->movement->date;
+        $movementResource = new Form\Resource\Movement($movement);
 
         return $this->handleView($this->view($movementResource));
     }
@@ -163,7 +165,6 @@ class MovementsController extends FOSRestController
 
     /**
      * @param $id
-     * @throws \Ports\Movement\Remove\MovementDoesNotExistsException
      * @return HttpFoundation\Response
      * @ApiDoc()
      */

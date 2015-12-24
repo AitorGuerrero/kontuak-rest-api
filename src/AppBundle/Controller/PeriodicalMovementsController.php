@@ -108,17 +108,6 @@ class PeriodicalMovementsController extends FOSRestController
 
     /**
      * @ApiDoc(
-     *  tags={"not implemented"},
-     *  output="AppBundle\Resources\Form\Type\PeriodicalMovement\NewPeriodicalMovement"
-     * )
-     */
-    public function getPeriodical_movementsFormPostAction()
-    {
-
-    }
-
-    /**
-     * @ApiDoc(
      *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
      *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement"
      * )
@@ -154,45 +143,6 @@ class PeriodicalMovementsController extends FOSRestController
         $request->id = $resource->id;
         $periodicalMovement = $useCase->execute($request);
 
-        return $this->handleView($this->view($periodicalMovement->periodicalMovement));
-    }
-
-    /**
-     * @ApiDoc(tags={"not implemented"})
-     * @param $id
-     */
-    public function deletePeriodical_movementAction($id)
-    {
-    }
-
-    /**
-     * @ApiDoc(
-     *  input="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
-     *  output="AppBundle\Resources\Form\Resource\PeriodicalMovement",
-     *  tags={"not implemented"}
-     * )
-     * @param $id
-     */
-    public function patchPeriodical_movementsAction($id)
-    {
-    }
-
-    /**
-     * @ApiDoc(
-     *  output="AppBundle\Resources\Form\Type\PeriodicalMovement\PatchPeriodicalMovement",
-     *  tags={"not implemented"}
-     * )
-     */
-    public function getPeriodical_movementsFormPatchAction()
-    {
-    }
-
-    /**
-     * @ApiDoc(tags={"not implemented"})
-     * @param $id
-     */
-    public function getPeriodical_movementMovementsAction($id)
-    {
-
+        return $this->handleView($this->view($periodicalMovement));
     }
 }

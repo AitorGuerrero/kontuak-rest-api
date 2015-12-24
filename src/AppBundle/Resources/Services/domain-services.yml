@@ -8,3 +8,6 @@ services:
   kontuak.periodical_movement.movements_generator:
     class: Kontuak\PeriodicalMovement\MovementsGenerator
     arguments: [ @kontuak.integration_doctrine_movement.source, @timestamp ]
+  kontuak.movement.exists_checker:
+      class: Kontuak\Movement\ExistsChecker
+      arguments: [ @kontuak.source.movement ]

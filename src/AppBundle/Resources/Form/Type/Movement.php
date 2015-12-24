@@ -15,7 +15,6 @@ class Movement extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'text')
             ->add('amount', 'number')
             ->add('concept', 'text')
             ->add('date', 'text')
