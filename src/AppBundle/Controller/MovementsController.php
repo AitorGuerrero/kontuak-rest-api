@@ -53,9 +53,15 @@ class MovementsController extends FOSRestController
         $request->limit = (int) $httpRequest->get('limit');
         $request->toDate = $httpRequest->get('dateTo');
         $request->fromDate = $httpRequest->get('dateFrom');
-        $amounts = $useCase->execute($request);
+        $response = [];
+        foreach ($useCase->execute($request) as $amount) {
+            $response[] = [
+                'totalAmount' => $amount['totalAmount'],
+                'movement' => new Form\Resource\Movement($amount['movement']),
+            ];
+        }
 
-        return $this->handleView($this->view($amounts));
+        return $this->handleView($this->view($response));
     }
 
     /**
